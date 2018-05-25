@@ -10,6 +10,7 @@ INSERT INTO currency (
     'USD'
 );
 
+
 INSERT INTO offer (
     offer_id, merchant_id, description,
     offering_id, price, currency_code,
