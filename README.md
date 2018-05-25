@@ -15,4 +15,4 @@ Description of modules:
 * Service
 * Web
 
-![Alt text](https://g.gravizo.com/source/svg?https://raw.githubusercontent.com/halljon/offer-example/master/use-case-overview.plantuml)
+![Alt text](https://g.gravizo.com/source/svg?https://raw.githubusercontent.com/halljon/offer-example/master/docs/use-case-overview.plantuml)
