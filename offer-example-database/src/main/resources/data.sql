@@ -1,14 +1,15 @@
 INSERT INTO currency (
     currency_code
 ) VALUES (
-    'GBP'    
+    'GBP'
 );
 
 INSERT INTO currency (
     currency_code
 ) VALUES (
-    'USD'    
+    'USD'
 );
+
 
 INSERT INTO offer (
     offer_id, merchant_id, description,
