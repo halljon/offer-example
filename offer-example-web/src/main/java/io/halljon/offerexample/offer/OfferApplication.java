@@ -1,11 +1,11 @@
-package io.halljon.offerexample;
+package io.halljon.offerexample.offer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class OfferExampleApplication {
+public class OfferApplication {
     public static void main(String[] args) {
-        SpringApplication.run(OfferExampleApplication.class, args);
+        SpringApplication.run(OfferApplication.class, args);
     }
 }

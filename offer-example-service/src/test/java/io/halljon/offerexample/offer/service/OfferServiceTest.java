@@ -1,9 +1,9 @@
-package io.halljon.offerexample.offer.service.impl;
+package io.halljon.offerexample.offer.service;
 
 import io.halljon.offerexample.identifier.IdentifierGenerator;
 import io.halljon.offerexample.offer.domain.Offer;
 import io.halljon.offerexample.offer.repository.OfferRepository;
-import io.halljon.offerexample.offer.service.OfferService;
+import io.halljon.offerexample.offer.service.impl.OfferServiceImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,8 +22,9 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class OfferServiceImplTest {
-    private static final String EXPECTED_IDENTIFIER = "some-identifier";
+public class OfferServiceTest {
+    private static final String EXPECTED_MERCHANT_IDENTIFIER = "merchant-identifier";
+    private static final String EXPECTED_OFFER_IDENTIFIER = "offer-identifier";
 
     private final Offer offer = new Offer();
 
@@ -54,16 +55,17 @@ public class OfferServiceImplTest {
         when(generator
                 .generateIdentifier()
         ).thenReturn(
-                EXPECTED_IDENTIFIER
+                EXPECTED_OFFER_IDENTIFIER
         );
 
         doNothing().when(offerRepository)
                 .saveOffer(offer);
 
-        final String identifier = offerService.saveOffer(offer);
+        final String identifier = offerService.saveOffer(EXPECTED_MERCHANT_IDENTIFIER, offer);
 
-        assertThat(identifier, equalTo(EXPECTED_IDENTIFIER));
-        assertThat(offer.getOfferIdentifier(), equalTo(EXPECTED_IDENTIFIER));
+        assertThat(identifier, equalTo(EXPECTED_OFFER_IDENTIFIER));
+        assertThat(offer.getOfferIdentifier(), equalTo(EXPECTED_OFFER_IDENTIFIER));
+        assertThat(offer.getMerchantIdentifier(), equalTo(EXPECTED_MERCHANT_IDENTIFIER));
 
         verify(generator)
                 .generateIdentifier();
@@ -77,14 +79,14 @@ public class OfferServiceImplTest {
         when(generator
                 .generateIdentifier()
         ).thenReturn(
-                EXPECTED_IDENTIFIER
+                EXPECTED_OFFER_IDENTIFIER
         );
 
         doThrow(DataIntegrityViolationException.class).when(offerRepository)
                 .saveOffer(offer);
 
         try {
-            offerService.saveOffer(offer);
+            offerService.saveOffer(EXPECTED_MERCHANT_IDENTIFIER, offer);
 
             fail("Exception was expected");
         } catch (Exception e) {
