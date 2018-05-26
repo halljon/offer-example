@@ -5,6 +5,7 @@ import io.halljon.offerexample.offer.service.OfferService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,14 +18,14 @@ public class MerchantOfferController {
         this.offerService = offerService;
     }
 
-    @PostMapping("merchandIdentifier")
+    @PostMapping(value = "/{merchantIdentifier}")
     public String postOffer(@PathVariable("merchantIdentifier") final String merchantIdentifier,
-                            final Offer offer) {
+                            @RequestBody final Offer offer) {
 
         return offerService.saveOffer(merchantIdentifier, offer);
     }
 
-    @DeleteMapping({"merchantIdentifier/offerIdentifier"})
+    @DeleteMapping(value = "/{merchantIdentifier}/{offerIdentifier}")
     public void deleteOffer(@PathVariable("merchantIdentifier") final String merchantIdentifier,
                             @PathVariable("offerIdentifier") final String offerIdentifier) {
 
