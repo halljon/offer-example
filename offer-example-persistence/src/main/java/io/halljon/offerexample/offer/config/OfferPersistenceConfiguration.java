@@ -19,5 +19,4 @@ public class OfferPersistenceConfiguration {
     public OfferRepository offerRepository(final NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         return new OfferRepositoryJdbcImpl(namedParameterJdbcTemplate);
     }
-
 }
