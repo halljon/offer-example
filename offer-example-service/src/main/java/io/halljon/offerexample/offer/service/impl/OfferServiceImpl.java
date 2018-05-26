@@ -1,5 +1,6 @@
 package io.halljon.offerexample.offer.service.impl;
 
+import io.halljon.offerexample.identifier.IdentifierGenerator;
 import io.halljon.offerexample.offer.domain.Offer;
 import io.halljon.offerexample.offer.repository.OfferRepository;
 import io.halljon.offerexample.offer.service.OfferService;
@@ -10,14 +11,23 @@ import java.util.Collection;
 @Service
 public class OfferServiceImpl implements OfferService {
     private final OfferRepository offerRepository;
+    private final IdentifierGenerator generator;
 
-    public OfferServiceImpl(OfferRepository offerRepository) {
+    public OfferServiceImpl(final OfferRepository offerRepository,
+                            final IdentifierGenerator generator) {
+
         this.offerRepository = offerRepository;
+        this.generator = generator;
     }
 
     @Override
     public String saveOffer(final Offer offer) {
-        throw new UnsupportedOperationException();
+        final String identifier = generator.generateIdentifier();
+        offer.setOfferIdentifier(identifier);
+
+        offerRepository.saveOffer(offer);
+
+        return identifier;
     }
 
     @Override
