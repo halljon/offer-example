@@ -1,6 +1,6 @@
-package io.halljon.offerexample.identifier.impl;
+package io.halljon.offerexample.offer.service.impl;
 
-import io.halljon.offerexample.identifier.IdentifierGenerator;
+import io.halljon.offerexample.offer.service.IdentifierGenerator;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;

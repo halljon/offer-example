@@ -1,6 +1,5 @@
 package io.halljon.offerexample.offer.service;
 
-import io.halljon.offerexample.identifier.IdentifierGenerator;
 import io.halljon.offerexample.offer.domain.Offer;
 import io.halljon.offerexample.offer.repository.OfferRepository;
 import io.halljon.offerexample.offer.service.impl.OfferServiceImpl;

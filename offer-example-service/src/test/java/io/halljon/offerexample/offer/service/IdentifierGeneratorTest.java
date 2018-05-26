@@ -1,12 +1,12 @@
-package io.halljon.offerexample.identifier.impl;
+package io.halljon.offerexample.offer.service;
 
-import io.halljon.offerexample.identifier.IdentifierGenerator;
+import io.halljon.offerexample.offer.service.impl.IdentifierGeneratorImpl;
 import org.junit.Test;
 
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
-public class IdentifierGeneratorImplTest {
+public class IdentifierGeneratorTest {
     private IdentifierGenerator generator = new IdentifierGeneratorImpl();
 
     @Test
