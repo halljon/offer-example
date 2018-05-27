@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 public class Offer {
-    //TODO: JH - start and end date from timestamp to local date time and consider status code as char
+    //TODO: JH - start and end date from timestamp to local date time and consider status code as enu
     private String offerIdentifier;
     private String merchantIdentifier;
     private String description;

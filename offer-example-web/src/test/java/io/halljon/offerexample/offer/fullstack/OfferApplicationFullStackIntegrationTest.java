@@ -37,7 +37,7 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = OfferApplication.class, webEnvironment = RANDOM_PORT)
-@Sql(scripts = "classpath:full-stack-test-preparation.sql", executionPhase = BEFORE_TEST_METHOD)
+@Sql(scripts = "classpath:sql/full-stack-test-preparation.sql", executionPhase = BEFORE_TEST_METHOD)
 public class OfferApplicationFullStackIntegrationTest {
     @Autowired
     private TestRestTemplate restTemplate;
@@ -50,7 +50,7 @@ public class OfferApplicationFullStackIntegrationTest {
 
     @Test
     public void createNewOffer() {
-        final String merchantIdentifier = "full-stack-merchant-id";
+        final String merchantIdentifier = "full-stack-test-merchant-id";
         final Offer offer = createPopulatedOfferWithKnownValues();
         final HttpEntity<Offer> request = new HttpEntity<>(offer);
 

@@ -3,7 +3,6 @@ package io.halljon.offerexample.offer.repository;
 import io.halljon.offerexample.offer.domain.Offer;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.Collection;
 
 public interface OfferRepository {
