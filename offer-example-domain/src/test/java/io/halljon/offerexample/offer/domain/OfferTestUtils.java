@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 import static io.halljon.offerexample.offer.common.OfferConst.DEFAULT_ZONE_ID;
+import static io.halljon.offerexample.offer.common.OfferConst.OFFER_STATUS_CODE_ACTIVE;
 
 public final class OfferTestUtils {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -21,7 +22,7 @@ public final class OfferTestUtils {
     private static final String KNOWN_CURRENCY_CODE_1 = "USD";
     private static final Timestamp KNOWN_ACTIVE_START_DATE_1 = Timestamp.valueOf(LOCAL_DATE_TIME_NOW.minusDays(12));
     private static final Timestamp KNOWN_ACTIVE_END_DATE_1 = Timestamp.valueOf(LOCAL_DATE_TIME_NOW.plusDays(23));
-    private static final String KNOWN_STATUS_CODE_1 = "A";
+    private static final String KNOWN_STATUS_CODE_1 = OFFER_STATUS_CODE_ACTIVE;
 
     private OfferTestUtils() {
         // Private constructor to prevent creation

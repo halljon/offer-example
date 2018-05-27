@@ -20,6 +20,7 @@ import java.sql.Timestamp;
 import java.util.Map;
 import java.util.Optional;
 
+import static io.halljon.offerexample.offer.common.OfferConst.OFFER_STATUS_CODE_ACTIVE;
 import static io.halljon.offerexample.offer.domain.OfferTestUtils.createPopulatedOfferWithKnownValues;
 import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_ACTIVE_END_DATE_COLUMN;
 import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_ACTIVE_START_DATE_COLUMN;
@@ -98,7 +99,7 @@ public class OfferRepositoryPartialStackIntegrationTest {
         assertThat(offer.getCurrencyCode(), equalTo("GBP"));
         assertThat(offer.getActiveStartDate(), equalTo(Timestamp.valueOf("2018-01-01 00:00:00")));
         assertThat(offer.getActiveEndDate(), equalTo(Timestamp.valueOf("2018-01-31 23:59:59")));
-        assertThat(offer.getStatusCode(), equalTo("A"));
+        assertThat(offer.getStatusCode(), equalTo(OFFER_STATUS_CODE_ACTIVE));
     }
 
     @Test
