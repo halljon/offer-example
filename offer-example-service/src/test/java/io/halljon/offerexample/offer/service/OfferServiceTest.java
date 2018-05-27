@@ -58,7 +58,7 @@ public class OfferServiceTest {
         );
 
         doNothing().when(mockOfferRepository)
-                .saveOffer(offer);
+                .saveNewOffer(offer);
 
         final String identifier = offerService.createNewOffer(EXPECTED_MERCHANT_IDENTIFIER, offer);
 
@@ -70,7 +70,7 @@ public class OfferServiceTest {
                 .generateIdentifier();
 
         verify(mockOfferRepository)
-                .saveOffer(offer);
+                .saveNewOffer(offer);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class OfferServiceTest {
         );
 
         doThrow(DataIntegrityViolationException.class).when(mockOfferRepository)
-                .saveOffer(offer);
+                .saveNewOffer(offer);
 
         try {
             offerService.createNewOffer(EXPECTED_MERCHANT_IDENTIFIER, offer);
@@ -93,7 +93,7 @@ public class OfferServiceTest {
                     .generateIdentifier();
 
             verify(mockOfferRepository)
-                    .saveOffer(offer);
+                    .saveNewOffer(offer);
         }
     }
 }

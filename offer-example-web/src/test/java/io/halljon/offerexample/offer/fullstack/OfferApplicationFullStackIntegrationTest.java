@@ -17,6 +17,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.Map;
 
 import static io.halljon.offerexample.offer.domain.OfferTestUtils.createPopulatedOfferWithKnownValues;
+import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_ACTIVE_END_DATE_COLUMN;
+import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_ACTIVE_START_DATE_COLUMN;
+import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_CURRENCY_CODE_COLUMN;
+import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_DESCRIPTION_COLUMN;
+import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_MERCHANT_ID_COLUMN;
+import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_OFFERING_ID_COLUMN;
+import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_OFFER_ID_COLUMN;
+import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_PRICE_COLUMN;
+import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_STATUS_CODE_COLUMN;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -55,16 +64,16 @@ public class OfferApplicationFullStackIntegrationTest {
 
         final Map<String, Object> values = namedParameterJdbcTemplate.queryForMap(
                 "SELECT * FROM offer WHERE offer_id = :offer_id",
-                singletonMap("offer_id", identifierOfCreatedOffer));
+                singletonMap(OFFER_OFFER_ID_COLUMN, identifierOfCreatedOffer));
 
-        assertThat(values.get("offer_id"), equalTo(identifierOfCreatedOffer));
-        assertThat(values.get("merchant_id"), equalTo(merchantIdentifier));
-        assertThat(values.get("description"), equalTo(offer.getDescription()));
-        assertThat(values.get("offering_id"), equalTo(offer.getOfferingIdentifier()));
-        assertThat(values.get("price"), equalTo(offer.getPrice()));
-        assertThat(values.get("currency_code"), equalTo(offer.getCurrencyCode()));
-        assertThat(values.get("active_start_date"), equalTo(offer.getActiveStartDate()));
-        assertThat(values.get("active_end_date"), equalTo(offer.getActiveEndDate()));
-        assertThat(values.get("status_code"), equalTo(offer.getStatusCode()));
+        assertThat(values.get(OFFER_OFFER_ID_COLUMN), equalTo(identifierOfCreatedOffer));
+        assertThat(values.get(OFFER_MERCHANT_ID_COLUMN), equalTo(merchantIdentifier));
+        assertThat(values.get(OFFER_DESCRIPTION_COLUMN), equalTo(offer.getDescription()));
+        assertThat(values.get(OFFER_OFFERING_ID_COLUMN), equalTo(offer.getOfferingIdentifier()));
+        assertThat(values.get(OFFER_PRICE_COLUMN), equalTo(offer.getPrice()));
+        assertThat(values.get(OFFER_CURRENCY_CODE_COLUMN), equalTo(offer.getCurrencyCode()));
+        assertThat(values.get(OFFER_ACTIVE_START_DATE_COLUMN), equalTo(offer.getActiveStartDate()));
+        assertThat(values.get(OFFER_ACTIVE_END_DATE_COLUMN), equalTo(offer.getActiveEndDate()));
+        assertThat(values.get(OFFER_STATUS_CODE_COLUMN), equalTo(offer.getStatusCode()));
     }
 }

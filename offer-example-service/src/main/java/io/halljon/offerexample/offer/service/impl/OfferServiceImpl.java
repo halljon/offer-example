@@ -30,7 +30,7 @@ public class OfferServiceImpl implements OfferService {
         offer.setOfferIdentifier(identifier);
         offer.setMerchantIdentifier(merchantIdentifier);
 
-        offerRepository.saveOffer(offer);
+        offerRepository.saveNewOffer(offer);
 
         return identifier;
     }
