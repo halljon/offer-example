@@ -1,9 +1,13 @@
 package io.halljon.offerexample.offer.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 public class Offer {
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
+
     //TODO: JH - start and end date from timestamp to local date time and consider status code as enu
     private String offerIdentifier;
     private String merchantIdentifier;
@@ -63,6 +67,7 @@ public class Offer {
         this.currencyCode = currencyCode;
     }
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     public Timestamp getActiveStartDate() {
         return activeStartDate;
     }
@@ -71,6 +76,7 @@ public class Offer {
         this.activeStartDate = activeStartDate;
     }
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DATE_FORMAT)
     public Timestamp getActiveEndDate() {
         return activeEndDate;
     }

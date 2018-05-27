@@ -55,7 +55,7 @@ public class OfferApplicationFullStackIntegrationTest {
         final HttpEntity<Offer> request = new HttpEntity<>(offer);
 
         final ResponseEntity<String> response = restTemplate.exchange(
-                "http://localhost:" + port + "/v1/offers/" + merchantIdentifier, POST, request, String.class);
+                "http://localhost:" + port + "/v1/offers/{merchantIdentifier}", POST, request, String.class, merchantIdentifier);
 
         assertThat(response.getStatusCode(), equalTo(OK));
         assertThat(response.getBody(), notNullValue());
