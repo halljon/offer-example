@@ -80,5 +80,6 @@
         <module>offer-example-persistence</module>
         <module>offer-example-service</module>
         <module>offer-example-web</module>
+        <module>offer-example-integration-tests</module>
     </modules>
 </project>
