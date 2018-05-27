@@ -62,14 +62,14 @@ public class MerchantOfferControllerTest {
     }
 
     @Test
-    public void postOfferOk()
+    public void createNewOffer()
             throws Exception {
 
         final String merchantIdentifier = "merchant-id-12345";
         final String expectedOfferIdentifier = "offer-id-12345";
 
         when(mockOfferService
-                .saveOffer(eq(merchantIdentifier), any(Offer.class))
+                .createNewOffer(eq(merchantIdentifier), any(Offer.class))
         ).thenReturn(expectedOfferIdentifier);
 
         final MvcResult mvcResult = mockMvc.perform(
@@ -82,7 +82,7 @@ public class MerchantOfferControllerTest {
         assertThat(mvcResult.getResponse().getContentAsString(), equalTo(expectedOfferIdentifier));
 
         verify(mockOfferService)
-                .saveOffer(eq(merchantIdentifier), captorOffer.capture());
+                .createNewOffer(eq(merchantIdentifier), captorOffer.capture());
 
         assertThat(captorOffer.getValue().getDescription(), equalTo(KNOWN_DESCRIPTION_1));
         assertThat(captorOffer.getValue().getOfferingIdentifier(), equalTo(KNOWN_OFFERING_IDENTIFIER_1));

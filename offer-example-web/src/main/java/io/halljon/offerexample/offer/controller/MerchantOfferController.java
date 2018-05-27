@@ -19,14 +19,14 @@ public class MerchantOfferController {
     }
 
     @PostMapping(value = "/{merchantIdentifier}")
-    public String postOffer(@PathVariable("merchantIdentifier") final String merchantIdentifier,
-                            @RequestBody final Offer offer) {
+    public String saveNewOffer(@PathVariable("merchantIdentifier") final String merchantIdentifier,
+                               @RequestBody final Offer offer) {
 
-        return offerService.saveOffer(merchantIdentifier, offer);
+        return offerService.createNewOffer(merchantIdentifier, offer);
     }
 
     @DeleteMapping(value = "/{merchantIdentifier}/{offerIdentifier}")
-    public void deleteOffer(@PathVariable("merchantIdentifier") final String merchantIdentifier,
+    public void cancelOffer(@PathVariable("merchantIdentifier") final String merchantIdentifier,
                             @PathVariable("offerIdentifier") final String offerIdentifier) {
 
         /*

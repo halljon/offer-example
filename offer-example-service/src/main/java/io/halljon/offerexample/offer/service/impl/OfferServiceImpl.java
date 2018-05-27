@@ -21,8 +21,8 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
-    public String saveOffer(final String merchantIdentifier,
-                            final Offer offer) {
+    public String createNewOffer(final String merchantIdentifier,
+                                 final Offer offer) {
 
         final String identifier = generator.generateIdentifier();
         offer.setOfferIdentifier(identifier);

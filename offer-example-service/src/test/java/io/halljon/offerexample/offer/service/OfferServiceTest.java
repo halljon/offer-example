@@ -50,7 +50,7 @@ public class OfferServiceTest {
     }
 
     @Test
-    public void saveOffer() {
+    public void createNewOffer() {
         when(mockGenerator
                 .generateIdentifier()
         ).thenReturn(
@@ -60,7 +60,7 @@ public class OfferServiceTest {
         doNothing().when(mockOfferRepository)
                 .saveOffer(offer);
 
-        final String identifier = offerService.saveOffer(EXPECTED_MERCHANT_IDENTIFIER, offer);
+        final String identifier = offerService.createNewOffer(EXPECTED_MERCHANT_IDENTIFIER, offer);
 
         assertThat(identifier, equalTo(EXPECTED_OFFER_IDENTIFIER));
         assertThat(offer.getOfferIdentifier(), equalTo(EXPECTED_OFFER_IDENTIFIER));
@@ -74,7 +74,7 @@ public class OfferServiceTest {
     }
 
     @Test
-    public void saveOfferWhenRepositoryThrowsException() {
+    public void createNewOfferWhenRepositoryThrowsException() {
         when(mockGenerator
                 .generateIdentifier()
         ).thenReturn(
@@ -85,7 +85,7 @@ public class OfferServiceTest {
                 .saveOffer(offer);
 
         try {
-            offerService.saveOffer(EXPECTED_MERCHANT_IDENTIFIER, offer);
+            offerService.createNewOffer(EXPECTED_MERCHANT_IDENTIFIER, offer);
 
             fail("Exception was expected");
         } catch (Exception e) {

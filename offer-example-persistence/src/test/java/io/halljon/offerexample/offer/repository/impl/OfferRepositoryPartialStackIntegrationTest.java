@@ -35,7 +35,7 @@ import static org.junit.Assert.assertThat;
 @EnableAutoConfiguration
 @Rollback
 @Transactional
-public class OfferRepositoryPartialStackTest {
+public class OfferRepositoryPartialStackIntegrationTest {
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 

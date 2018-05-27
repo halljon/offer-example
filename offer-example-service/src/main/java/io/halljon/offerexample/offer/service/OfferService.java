@@ -5,8 +5,8 @@ import io.halljon.offerexample.offer.domain.Offer;
 import java.util.Collection;
 
 public interface OfferService {
-    String saveOffer(String merchantIdentifier,
-                     Offer offer);
+    String createNewOffer(String merchantIdentifier,
+                          Offer offer);
 
     void cancelOffer(String merchantIdentifier,
                      String offerIdentifier);
