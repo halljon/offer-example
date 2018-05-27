@@ -3,10 +3,10 @@ package io.halljon.offerexample.offer.domain;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+
+import static io.halljon.offerexample.offer.common.OfferConst.DEFAULT_ZONE_ID;
 
 public final class OfferTestUtils {
-    private static final ZoneId DEFAULT_ZONE_ID = ZoneId.of("UTC");
     private static final LocalDateTime LOCAL_DATE_TIME_NOW = LocalDateTime.now(DEFAULT_ZONE_ID);
     private static final String KNOWN_OFFER_IDENTIFIER_1 = "offer-123";
     private static final String KNOWN_MERCHANT_IDENTIFIER_1 = "merchant-123";

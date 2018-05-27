@@ -13,8 +13,6 @@ public interface OfferService {
 
     Collection<Offer> findActiveOffers(String merchantIdentifier);
 
-    Collection<Offer> findAllOffers(String merchantIdentifier);
-
     Offer findActiveOffer(String merchantIdentifier,
                           String offerIdentifier);
 }

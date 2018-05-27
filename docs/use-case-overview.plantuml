@@ -2,7 +2,6 @@
 left to right direction
 
 Merchant -> (Create \n an Offer)
-Merchant --> (Retrieve \n all my Offers)
 Merchant --> (Cancel \nan Offer)
 
 

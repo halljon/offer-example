@@ -7,7 +7,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
 public class IdentifierGeneratorTest {
-    private IdentifierGenerator generator = new IdentifierGeneratorImpl();
+    private final IdentifierGenerator generator = new IdentifierGeneratorImpl();
 
     @Test
     public void generateIdentifier() {

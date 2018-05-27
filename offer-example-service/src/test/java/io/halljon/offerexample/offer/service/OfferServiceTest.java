@@ -10,7 +10,12 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
+import static io.halljon.offerexample.offer.common.OfferConst.DEFAULT_ZONE_ID;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -22,8 +27,10 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OfferServiceTest {
-    private static final String EXPECTED_MERCHANT_IDENTIFIER = "merchant-identifier";
-    private static final String EXPECTED_OFFER_IDENTIFIER = "offer-identifier";
+    private static final String MERCHANT_IDENTIFIER = "merchant-identifier";
+    private static final String OFFER_IDENTIFIER = "offer-identifier";
+    private static final String SPECIFIC_EXCEPTION_WAS_EXPECTED_BUT_DID_NOT_OCCUR =
+            "A specific exception was expected, but did not occur";
 
     private final Offer offer = new Offer();
 
@@ -33,19 +40,22 @@ public class OfferServiceTest {
     @Mock
     private IdentifierGenerator mockGenerator;
 
-    private OfferService offerService;
+    @Mock
+    private DateService mockDateService;
 
+    private OfferService offerService;
 
     @Before
     public void beforeEachTest() {
-        offerService = new OfferServiceImpl(mockOfferRepository, mockGenerator);
+        offerService = new OfferServiceImpl(mockOfferRepository, mockGenerator, mockDateService);
     }
 
     @After
     public void afterEachTest() {
         verifyNoMoreInteractions(
                 mockOfferRepository,
-                mockGenerator
+                mockGenerator,
+                mockDateService
         );
     }
 
@@ -54,17 +64,17 @@ public class OfferServiceTest {
         when(mockGenerator
                 .generateIdentifier()
         ).thenReturn(
-                EXPECTED_OFFER_IDENTIFIER
+                OFFER_IDENTIFIER
         );
 
         doNothing().when(mockOfferRepository)
                 .saveNewOffer(offer);
 
-        final String identifier = offerService.createNewOffer(EXPECTED_MERCHANT_IDENTIFIER, offer);
+        final String identifier = offerService.createNewOffer(MERCHANT_IDENTIFIER, offer);
 
-        assertThat(identifier, equalTo(EXPECTED_OFFER_IDENTIFIER));
-        assertThat(offer.getOfferIdentifier(), equalTo(EXPECTED_OFFER_IDENTIFIER));
-        assertThat(offer.getMerchantIdentifier(), equalTo(EXPECTED_MERCHANT_IDENTIFIER));
+        assertThat(identifier, equalTo(OFFER_IDENTIFIER));
+        assertThat(offer.getOfferIdentifier(), equalTo(OFFER_IDENTIFIER));
+        assertThat(offer.getMerchantIdentifier(), equalTo(MERCHANT_IDENTIFIER));
 
         verify(mockGenerator)
                 .generateIdentifier();
@@ -78,22 +88,80 @@ public class OfferServiceTest {
         when(mockGenerator
                 .generateIdentifier()
         ).thenReturn(
-                EXPECTED_OFFER_IDENTIFIER
+                OFFER_IDENTIFIER
         );
 
         doThrow(DataIntegrityViolationException.class).when(mockOfferRepository)
                 .saveNewOffer(offer);
 
         try {
-            offerService.createNewOffer(EXPECTED_MERCHANT_IDENTIFIER, offer);
+            offerService.createNewOffer(MERCHANT_IDENTIFIER, offer);
 
-            fail("Exception was expected");
-        } catch (Exception e) {
+            fail(SPECIFIC_EXCEPTION_WAS_EXPECTED_BUT_DID_NOT_OCCUR);
+        } catch (DataIntegrityViolationException e) {
             verify(mockGenerator)
                     .generateIdentifier();
 
             verify(mockOfferRepository)
                     .saveNewOffer(offer);
+        } catch (Exception e) {
+            fail(SPECIFIC_EXCEPTION_WAS_EXPECTED_BUT_DID_NOT_OCCUR);
+        }
+    }
+
+    @Test
+    public void findActiveOffer() {
+        final LocalDateTime dateTime = LocalDateTime.now(DEFAULT_ZONE_ID);
+        final Timestamp timestamp = Timestamp.valueOf(dateTime);
+        final Offer offer = new Offer();
+
+        when(mockDateService
+                .getCurrentDateTime()
+        ).thenReturn(
+                dateTime
+        );
+
+        when(mockOfferRepository.
+                findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER, timestamp)
+        ).thenReturn(
+                offer
+        );
+
+        final Offer offerFound = offerService.findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER);
+
+        assertThat(offerFound, equalTo(offer));
+
+        verify(mockDateService)
+                .getCurrentDateTime();
+
+        verify(mockOfferRepository)
+                .findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER, timestamp);
+    }
+
+    @Test
+    public void findActiveOfferWhenRepositoryThrowsException() {
+        final LocalDateTime dateTime = LocalDateTime.now(DEFAULT_ZONE_ID);
+        final Timestamp timestamp = Timestamp.valueOf(dateTime);
+
+        when(mockDateService
+                .getCurrentDateTime()
+        ).thenReturn(
+                dateTime
+        );
+
+        doThrow(EmptyResultDataAccessException.class).when(mockOfferRepository)
+                .findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER, timestamp);
+
+        try {
+            offerService.findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER);
+        } catch (EmptyResultDataAccessException e) {
+            verify(mockDateService)
+                    .getCurrentDateTime();
+
+            verify(mockOfferRepository)
+                    .findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER, timestamp);
+        } catch (Exception e) {
+            fail(SPECIFIC_EXCEPTION_WAS_EXPECTED_BUT_DID_NOT_OCCUR);
         }
     }
 }
