@@ -15,12 +15,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.math.BigDecimal;
 import java.nio.charset.Charset;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.createPopulatedOffer;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,18 +32,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @RunWith(SpringRunner.class)
 @WebMvcTest(MerchantOfferController.class)
 public class MerchantOfferControllerTest {
-    private static final ZoneId DEFAULT_ZONE_ID = ZoneId.of("UTC");
-    private static final LocalDateTime NOW = LocalDateTime.now(DEFAULT_ZONE_ID);
-    private static final String OFFER_IDENTIFIER = "offer-123";
-    private static final String MERCHANT_IDENTIFIER = "merchant-123";
-    private static final String DESCRIPTION = "DESCRIPTION-123";
-    private static final String OFFERING_IDENTIFIER = "offering-123";
-    private static final BigDecimal PRICE = new BigDecimal("1.23");
-    private static final String CURRENCY_CODE = "USD";
-    private static final Timestamp ACTIVE_START_DATE = Timestamp.valueOf(NOW.minusDays(1));
-    private static final Timestamp ACTIVE_END_DATE = Timestamp.valueOf(NOW);
-    private static final String STATUS_CODE = "C";
-
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private final MediaType contentType =
@@ -87,21 +72,6 @@ public class MerchantOfferControllerTest {
 
         assertThat(mvcResult.getResponse().getStatus(), equalTo(OK.value()));
         assertThat(mvcResult.getResponse().getContentAsString(), equalTo(expectedOfferIdentifier));
-    }
-
-    private Offer createPopulatedOffer() {
-        final Offer offer = new Offer();
-        offer.setOfferIdentifier(OFFER_IDENTIFIER);
-        offer.setMerchantIdentifier(MERCHANT_IDENTIFIER);
-        offer.setDescription(DESCRIPTION);
-        offer.setOfferingIdentifier(OFFERING_IDENTIFIER);
-        offer.setPrice(PRICE);
-        offer.setCurrencyCode(CURRENCY_CODE);
-        offer.setActiveStartDate(ACTIVE_START_DATE);
-        offer.setActiveEndDate(ACTIVE_END_DATE);
-        offer.setStatusCode(STATUS_CODE);
-
-        return offer;
     }
 
     private String asJson(final Offer offer)

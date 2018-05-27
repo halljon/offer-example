@@ -20,6 +20,16 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Map;
 
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.ACTIVE_END_DATE;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.ACTIVE_START_DATE;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.CURRENCY_CODE;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.DESCRIPTION;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.MERCHANT_IDENTIFIER;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.OFFERING_IDENTIFIER;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.OFFER_IDENTIFIER;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.PRICE;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.STATUS_CODE;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.createPopulatedOffer;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
@@ -30,18 +40,6 @@ import static org.junit.Assert.assertThat;
 @Rollback
 @Transactional
 public class OfferRepositoryPartialStackTest {
-    private static final ZoneId DEFAULT_ZONE_ID = ZoneId.of("UTC");
-    private static final LocalDateTime NOW = LocalDateTime.now(DEFAULT_ZONE_ID);
-    private static final String OFFER_IDENTIFIER = "offer-123";
-    private static final String MERCHANT_IDENTIFIER = "merchant-123";
-    private static final String DESCRIPTION = "DESCRIPTION-123";
-    private static final String OFFERING_IDENTIFIER = "offering-123";
-    private static final BigDecimal PRICE = new BigDecimal("1.23");
-    private static final String CURRENCY_CODE = "USD";
-    private static final Timestamp ACTIVE_START_DATE = Timestamp.valueOf(NOW.minusDays(1));
-    private static final Timestamp ACTIVE_END_DATE = Timestamp.valueOf(NOW);
-    private static final String STATUS_CODE = "C";
-
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -72,20 +70,5 @@ public class OfferRepositoryPartialStackTest {
         offer.setCurrencyCode("Z!Z");
 
         offerRepository.saveOffer(offer);
-    }
-
-    private Offer createPopulatedOffer() {
-        final Offer offer = new Offer();
-        offer.setOfferIdentifier(OFFER_IDENTIFIER);
-        offer.setMerchantIdentifier(MERCHANT_IDENTIFIER);
-        offer.setDescription(DESCRIPTION);
-        offer.setOfferingIdentifier(OFFERING_IDENTIFIER);
-        offer.setPrice(PRICE);
-        offer.setCurrencyCode(CURRENCY_CODE);
-        offer.setActiveStartDate(ACTIVE_START_DATE);
-        offer.setActiveEndDate(ACTIVE_END_DATE);
-        offer.setStatusCode(STATUS_CODE);
-
-        return offer;
     }
 }
