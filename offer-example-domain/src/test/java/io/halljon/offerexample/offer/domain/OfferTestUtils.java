@@ -16,7 +16,7 @@ public final class OfferTestUtils {
     public static final String KNOWN_CURRENCY_CODE_1 = "USD";
     public static final Timestamp KNOWN_ACTIVE_START_DATE_1 = Timestamp.valueOf(LOCAL_DATE_TIME_NOW.minusDays(12));
     public static final Timestamp KNOWN_ACTIVE_END_DATE_1 = Timestamp.valueOf(LOCAL_DATE_TIME_NOW.plusDays(23));
-    public static final String KNOWN_STATUS_CODE_1 = "C";
+    public static final String KNOWN_STATUS_CODE_1 = "A";
 
     private OfferTestUtils() {
         // Private constructor to prevent creation

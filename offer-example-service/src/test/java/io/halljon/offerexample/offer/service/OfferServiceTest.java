@@ -28,36 +28,36 @@ public class OfferServiceTest {
     private final Offer offer = new Offer();
 
     @Mock
-    private OfferRepository offerRepository;
+    private OfferRepository mockOfferRepository;
 
     @Mock
-    private IdentifierGenerator generator;
+    private IdentifierGenerator mockGenerator;
 
     private OfferService offerService;
 
 
     @Before
     public void beforeEachTest() {
-        offerService = new OfferServiceImpl(offerRepository, generator);
+        offerService = new OfferServiceImpl(mockOfferRepository, mockGenerator);
     }
 
     @After
     public void afterEachTest() {
         verifyNoMoreInteractions(
-                offerRepository,
-                generator
+                mockOfferRepository,
+                mockGenerator
         );
     }
 
     @Test
     public void saveOffer() {
-        when(generator
+        when(mockGenerator
                 .generateIdentifier()
         ).thenReturn(
                 EXPECTED_OFFER_IDENTIFIER
         );
 
-        doNothing().when(offerRepository)
+        doNothing().when(mockOfferRepository)
                 .saveOffer(offer);
 
         final String identifier = offerService.saveOffer(EXPECTED_MERCHANT_IDENTIFIER, offer);
@@ -66,22 +66,22 @@ public class OfferServiceTest {
         assertThat(offer.getOfferIdentifier(), equalTo(EXPECTED_OFFER_IDENTIFIER));
         assertThat(offer.getMerchantIdentifier(), equalTo(EXPECTED_MERCHANT_IDENTIFIER));
 
-        verify(generator)
+        verify(mockGenerator)
                 .generateIdentifier();
 
-        verify(offerRepository)
+        verify(mockOfferRepository)
                 .saveOffer(offer);
     }
 
     @Test
-    public void saveOfferWhenRepositoryThrowsExceptio() {
-        when(generator
+    public void saveOfferWhenRepositoryThrowsException() {
+        when(mockGenerator
                 .generateIdentifier()
         ).thenReturn(
                 EXPECTED_OFFER_IDENTIFIER
         );
 
-        doThrow(DataIntegrityViolationException.class).when(offerRepository)
+        doThrow(DataIntegrityViolationException.class).when(mockOfferRepository)
                 .saveOffer(offer);
 
         try {
@@ -89,10 +89,10 @@ public class OfferServiceTest {
 
             fail("Exception was expected");
         } catch (Exception e) {
-            verify(generator)
+            verify(mockGenerator)
                     .generateIdentifier();
 
-            verify(offerRepository)
+            verify(mockOfferRepository)
                     .saveOffer(offer);
         }
     }

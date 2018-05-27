@@ -7,6 +7,8 @@ import io.halljon.offerexample.offer.service.OfferService;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -17,6 +19,13 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.nio.charset.Charset;
 
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_ACTIVE_END_DATE_1;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_ACTIVE_START_DATE_1;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_CURRENCY_CODE_1;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_DESCRIPTION_1;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_OFFERING_IDENTIFIER_1;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_PRICE_1;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_STATUS_CODE_1;
 import static io.halljon.offerexample.offer.domain.OfferTestUtils.createPopulatedOffer;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
@@ -32,7 +41,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @RunWith(SpringRunner.class)
 @WebMvcTest(MerchantOfferController.class)
 public class MerchantOfferControllerTest {
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private final MediaType contentType =
             new MediaType(APPLICATION_JSON.getType(), APPLICATION_JSON.getSubtype(),
@@ -42,11 +51,14 @@ public class MerchantOfferControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private OfferService offerService;
+    private OfferService mockOfferService;
+
+    @Captor
+    private ArgumentCaptor<Offer> captorOffer;
 
     @After
     public void afterEachTest() {
-        verifyNoMoreInteractions(offerService);
+        verifyNoMoreInteractions(mockOfferService);
     }
 
     @Test
@@ -54,29 +66,36 @@ public class MerchantOfferControllerTest {
             throws Exception {
 
         final String merchantIdentifier = "merchant-id-12345";
-        final Offer offer = createPopulatedOffer();
         final String expectedOfferIdentifier = "offer-id-12345";
 
-        when(offerService
+        when(mockOfferService
                 .saveOffer(eq(merchantIdentifier), any(Offer.class))
         ).thenReturn(expectedOfferIdentifier);
 
         final MvcResult mvcResult = mockMvc.perform(
                 post("/v1/offers/" + merchantIdentifier)
                         .contentType(contentType)
-                        .content(asJson(offer)))
+                        .content(toJson(createPopulatedOffer())))
                 .andReturn();
-
-        verify(offerService)
-                .saveOffer(eq(merchantIdentifier), any(Offer.class));
 
         assertThat(mvcResult.getResponse().getStatus(), equalTo(OK.value()));
         assertThat(mvcResult.getResponse().getContentAsString(), equalTo(expectedOfferIdentifier));
+
+        verify(mockOfferService)
+                .saveOffer(eq(merchantIdentifier), captorOffer.capture());
+
+        assertThat(captorOffer.getValue().getDescription(), equalTo(KNOWN_DESCRIPTION_1));
+        assertThat(captorOffer.getValue().getOfferingIdentifier(), equalTo(KNOWN_OFFERING_IDENTIFIER_1));
+        assertThat(captorOffer.getValue().getPrice(), equalTo(KNOWN_PRICE_1));
+        assertThat(captorOffer.getValue().getCurrencyCode(), equalTo(KNOWN_CURRENCY_CODE_1));
+        assertThat(captorOffer.getValue().getActiveStartDate(), equalTo(KNOWN_ACTIVE_START_DATE_1));
+        assertThat(captorOffer.getValue().getActiveEndDate(), equalTo(KNOWN_ACTIVE_END_DATE_1));
+        assertThat(captorOffer.getValue().getStatusCode(), equalTo(KNOWN_STATUS_CODE_1));
     }
 
-    private String asJson(final Offer offer)
+    private String toJson(final Offer offer)
             throws JsonProcessingException {
 
-        return objectMapper.writeValueAsString(offer);
+        return OBJECT_MAPPER.writeValueAsString(offer);
     }
 }
