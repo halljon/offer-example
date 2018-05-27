@@ -14,21 +14,17 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.transaction.Transactional;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Map;
 
-import static io.halljon.offerexample.offer.domain.OfferTestUtils.ACTIVE_END_DATE;
-import static io.halljon.offerexample.offer.domain.OfferTestUtils.ACTIVE_START_DATE;
-import static io.halljon.offerexample.offer.domain.OfferTestUtils.CURRENCY_CODE;
-import static io.halljon.offerexample.offer.domain.OfferTestUtils.DESCRIPTION;
-import static io.halljon.offerexample.offer.domain.OfferTestUtils.MERCHANT_IDENTIFIER;
-import static io.halljon.offerexample.offer.domain.OfferTestUtils.OFFERING_IDENTIFIER;
-import static io.halljon.offerexample.offer.domain.OfferTestUtils.OFFER_IDENTIFIER;
-import static io.halljon.offerexample.offer.domain.OfferTestUtils.PRICE;
-import static io.halljon.offerexample.offer.domain.OfferTestUtils.STATUS_CODE;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_ACTIVE_END_DATE_1;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_ACTIVE_START_DATE_1;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_CURRENCY_CODE_1;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_DESCRIPTION_1;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_MERCHANT_IDENTIFIER_1;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_OFFERING_IDENTIFIER_1;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_OFFER_IDENTIFIER_1;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_PRICE_1;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_STATUS_CODE_1;
 import static io.halljon.offerexample.offer.domain.OfferTestUtils.createPopulatedOffer;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -51,17 +47,17 @@ public class OfferRepositoryPartialStackTest {
         offerRepository.saveOffer(createPopulatedOffer());
 
         final Map<String, Object> values = namedParameterJdbcTemplate.queryForMap(
-                "SELECT * FROM OFFER WHERE offer_id = :offer_id", singletonMap("offer_id", OFFER_IDENTIFIER));
+                "SELECT * FROM OFFER WHERE offer_id = :offer_id", singletonMap("offer_id", KNOWN_OFFER_IDENTIFIER_1));
 
-        assertThat(values.get("offer_id"), equalTo(OFFER_IDENTIFIER));
-        assertThat(values.get("merchant_id"), equalTo(MERCHANT_IDENTIFIER));
-        assertThat(values.get("description"), equalTo(DESCRIPTION));
-        assertThat(values.get("offering_id"), equalTo(OFFERING_IDENTIFIER));
-        assertThat(values.get("price"), equalTo(PRICE));
-        assertThat(values.get("currency_code"), equalTo(CURRENCY_CODE));
-        assertThat(values.get("active_start_date"), equalTo(ACTIVE_START_DATE));
-        assertThat(values.get("active_end_date"), equalTo(ACTIVE_END_DATE));
-        assertThat(values.get("status_code"), equalTo(STATUS_CODE));
+        assertThat(values.get("offer_id"), equalTo(KNOWN_OFFER_IDENTIFIER_1));
+        assertThat(values.get("merchant_id"), equalTo(KNOWN_MERCHANT_IDENTIFIER_1));
+        assertThat(values.get("description"), equalTo(KNOWN_DESCRIPTION_1));
+        assertThat(values.get("offering_id"), equalTo(KNOWN_OFFERING_IDENTIFIER_1));
+        assertThat(values.get("price"), equalTo(KNOWN_PRICE_1));
+        assertThat(values.get("currency_code"), equalTo(KNOWN_CURRENCY_CODE_1));
+        assertThat(values.get("active_start_date"), equalTo(KNOWN_ACTIVE_START_DATE_1));
+        assertThat(values.get("active_end_date"), equalTo(KNOWN_ACTIVE_END_DATE_1));
+        assertThat(values.get("status_code"), equalTo(KNOWN_STATUS_CODE_1));
     }
 
     @Test(expected = DataIntegrityViolationException.class)
