@@ -11,6 +11,11 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import static io.halljon.offerexample.offer.common.OfferConst.DEFAULT_ZONE_ID;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -22,8 +27,10 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OfferServiceTest {
-    private static final String EXPECTED_MERCHANT_IDENTIFIER = "merchant-identifier";
-    private static final String EXPECTED_OFFER_IDENTIFIER = "offer-identifier";
+    private static final String MERCHANT_IDENTIFIER = "merchant-identifier";
+    private static final String OFFER_IDENTIFIER = "offer-identifier";
+    private static final String SPECIFIC_EXCEPTION_WAS_EXPECTED_BUT_DID_NOT_OCCUR =
+            "A specific exception was expected, but did not occur";
 
     private final Offer offer = new Offer();
 
@@ -33,19 +40,22 @@ public class OfferServiceTest {
     @Mock
     private IdentifierGenerator mockGenerator;
 
-    private OfferService offerService;
+    @Mock
+    private DateService mockDateService;
 
+    private OfferService offerService;
 
     @Before
     public void beforeEachTest() {
-        offerService = new OfferServiceImpl(mockOfferRepository, mockGenerator);
+        offerService = new OfferServiceImpl(mockOfferRepository, mockGenerator, mockDateService);
     }
 
     @After
     public void afterEachTest() {
         verifyNoMoreInteractions(
                 mockOfferRepository,
-                mockGenerator
+                mockGenerator,
+                mockDateService
         );
     }
 
@@ -54,23 +64,23 @@ public class OfferServiceTest {
         when(mockGenerator
                 .generateIdentifier()
         ).thenReturn(
-                EXPECTED_OFFER_IDENTIFIER
+                OFFER_IDENTIFIER
         );
 
         doNothing().when(mockOfferRepository)
-                .saveOffer(offer);
+                .saveNewOffer(offer);
 
-        final String identifier = offerService.createNewOffer(EXPECTED_MERCHANT_IDENTIFIER, offer);
+        final String identifier = offerService.createNewOffer(MERCHANT_IDENTIFIER, offer);
 
-        assertThat(identifier, equalTo(EXPECTED_OFFER_IDENTIFIER));
-        assertThat(offer.getOfferIdentifier(), equalTo(EXPECTED_OFFER_IDENTIFIER));
-        assertThat(offer.getMerchantIdentifier(), equalTo(EXPECTED_MERCHANT_IDENTIFIER));
+        assertThat(identifier, equalTo(OFFER_IDENTIFIER));
+        assertThat(offer.getOfferIdentifier(), equalTo(OFFER_IDENTIFIER));
+        assertThat(offer.getMerchantIdentifier(), equalTo(MERCHANT_IDENTIFIER));
 
         verify(mockGenerator)
                 .generateIdentifier();
 
         verify(mockOfferRepository)
-                .saveOffer(offer);
+                .saveNewOffer(offer);
     }
 
     @Test
@@ -78,22 +88,82 @@ public class OfferServiceTest {
         when(mockGenerator
                 .generateIdentifier()
         ).thenReturn(
-                EXPECTED_OFFER_IDENTIFIER
+                OFFER_IDENTIFIER
         );
 
         doThrow(DataIntegrityViolationException.class).when(mockOfferRepository)
-                .saveOffer(offer);
+                .saveNewOffer(offer);
 
         try {
-            offerService.createNewOffer(EXPECTED_MERCHANT_IDENTIFIER, offer);
+            offerService.createNewOffer(MERCHANT_IDENTIFIER, offer);
 
-            fail("Exception was expected");
-        } catch (Exception e) {
+            fail(SPECIFIC_EXCEPTION_WAS_EXPECTED_BUT_DID_NOT_OCCUR);
+        } catch (DataIntegrityViolationException e) {
             verify(mockGenerator)
                     .generateIdentifier();
 
             verify(mockOfferRepository)
-                    .saveOffer(offer);
+                    .saveNewOffer(offer);
+        } catch (Exception e) {
+            fail(SPECIFIC_EXCEPTION_WAS_EXPECTED_BUT_DID_NOT_OCCUR);
         }
+    }
+
+    @Test
+    public void findActiveOfferWhenExists() {
+        final LocalDateTime dateTime = LocalDateTime.now(DEFAULT_ZONE_ID);
+        final Timestamp timestamp = Timestamp.valueOf(dateTime);
+        final Offer offer = new Offer();
+
+        when(mockDateService
+                .getCurrentDateTime()
+        ).thenReturn(
+                dateTime
+        );
+
+        when(mockOfferRepository.
+                findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER, timestamp)
+        ).thenReturn(
+                Optional.of(offer)
+        );
+
+        final Optional<Offer> optional = offerService.findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER);
+
+        assertThat(optional.isPresent(), equalTo(true));
+        assertThat(optional.get(), equalTo(offer));
+
+        verify(mockDateService)
+                .getCurrentDateTime();
+
+        verify(mockOfferRepository)
+                .findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER, timestamp);
+    }
+
+    @Test
+    public void findActiveOfferWhenDoesNotExist() {
+        final LocalDateTime dateTime = LocalDateTime.now(DEFAULT_ZONE_ID);
+        final Timestamp timestamp = Timestamp.valueOf(dateTime);
+
+        when(mockDateService
+                .getCurrentDateTime()
+        ).thenReturn(
+                dateTime
+        );
+
+        when(mockOfferRepository
+                .findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER, timestamp)
+        ).thenReturn(
+                Optional.empty()
+        );
+
+        final Optional<Offer> optional = offerService.findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER);
+
+        assertThat(optional.isPresent(), equalTo(false));
+
+        verify(mockDateService)
+                .getCurrentDateTime();
+
+        verify(mockOfferRepository)
+                .findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER, timestamp);
     }
 }

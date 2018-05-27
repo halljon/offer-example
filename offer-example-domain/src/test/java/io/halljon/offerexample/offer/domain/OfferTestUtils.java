@@ -1,12 +1,18 @@
 package io.halljon.offerexample.offer.domain;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+
+import static io.halljon.offerexample.offer.common.OfferConst.DEFAULT_ZONE_ID;
+import static io.halljon.offerexample.offer.common.OfferConst.OFFER_STATUS_CODE_ACTIVE;
 
 public final class OfferTestUtils {
-    private static final ZoneId DEFAULT_ZONE_ID = ZoneId.of("UTC");
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     private static final LocalDateTime LOCAL_DATE_TIME_NOW = LocalDateTime.now(DEFAULT_ZONE_ID);
     private static final String KNOWN_OFFER_IDENTIFIER_1 = "offer-123";
     private static final String KNOWN_MERCHANT_IDENTIFIER_1 = "merchant-123";
@@ -16,7 +22,7 @@ public final class OfferTestUtils {
     private static final String KNOWN_CURRENCY_CODE_1 = "USD";
     private static final Timestamp KNOWN_ACTIVE_START_DATE_1 = Timestamp.valueOf(LOCAL_DATE_TIME_NOW.minusDays(12));
     private static final Timestamp KNOWN_ACTIVE_END_DATE_1 = Timestamp.valueOf(LOCAL_DATE_TIME_NOW.plusDays(23));
-    private static final String KNOWN_STATUS_CODE_1 = "A";
+    private static final String KNOWN_STATUS_CODE_1 = OFFER_STATUS_CODE_ACTIVE;
 
     private OfferTestUtils() {
         // Private constructor to prevent creation
@@ -35,5 +41,11 @@ public final class OfferTestUtils {
         offer.setStatusCode(KNOWN_STATUS_CODE_1);
 
         return offer;
+    }
+
+    public static String toJson(final Offer offer)
+            throws JsonProcessingException {
+
+        return OBJECT_MAPPER.writeValueAsString(offer);
     }
 }

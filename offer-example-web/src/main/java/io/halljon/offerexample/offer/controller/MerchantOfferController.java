@@ -29,6 +29,10 @@ public class MerchantOfferController {
     public void cancelOffer(@PathVariable("merchantIdentifier") final String merchantIdentifier,
                             @PathVariable("offerIdentifier") final String offerIdentifier) {
 
+        if (true) {
+            throw new UnsupportedOperationException();
+        }
+
         /*
             If found and then deleted, then return good code
             If not found, then return 404?

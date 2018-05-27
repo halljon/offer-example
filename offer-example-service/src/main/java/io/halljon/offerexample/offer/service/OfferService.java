@@ -3,6 +3,7 @@ package io.halljon.offerexample.offer.service;
 import io.halljon.offerexample.offer.domain.Offer;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public interface OfferService {
     String createNewOffer(String merchantIdentifier,
@@ -13,8 +14,6 @@ public interface OfferService {
 
     Collection<Offer> findActiveOffers(String merchantIdentifier);
 
-    Collection<Offer> findAllOffers(String merchantIdentifier);
-
-    Offer findActiveOffer(String merchantIdentifier,
-                          String offerIdentifier);
+    Optional<Offer> findActiveOffer(String merchantIdentifier,
+                                    String offerIdentifier);
 }
