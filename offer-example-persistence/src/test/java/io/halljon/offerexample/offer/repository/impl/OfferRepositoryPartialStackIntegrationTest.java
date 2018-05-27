@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.jdbc.Sql;
@@ -19,6 +18,7 @@ import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Map;
+import java.util.Optional;
 
 import static io.halljon.offerexample.offer.domain.OfferTestUtils.createPopulatedOfferWithKnownValues;
 import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_ACTIVE_END_DATE_COLUMN;
@@ -84,7 +84,11 @@ public class OfferRepositoryPartialStackIntegrationTest {
     public void findActiveOfferWhenExists() {
         final String offerIdentifier = "offer-id-1004";
 
-        final Offer offer = offerRepository.findActiveOffer(MERCHANT_IDENTIFIER_1, offerIdentifier, SPECIFIED_DATE_TIME);
+        final Optional<Offer> optional = offerRepository.findActiveOffer(MERCHANT_IDENTIFIER_1, offerIdentifier, SPECIFIED_DATE_TIME);
+
+        assertThat(optional.isPresent(), equalTo(true));
+
+        final Offer offer = optional.get();
 
         assertThat(offer.getOfferIdentifier(), equalTo(offerIdentifier));
         assertThat(offer.getMerchantIdentifier(), equalTo(MERCHANT_IDENTIFIER_1));
@@ -97,14 +101,19 @@ public class OfferRepositoryPartialStackIntegrationTest {
         assertThat(offer.getStatusCode(), equalTo("A"));
     }
 
-    @Test(expected = EmptyResultDataAccessException.class)
+    @Test
     public void findActiveOfferWhenNotActive() {
-        offerRepository.findActiveOffer(MERCHANT_IDENTIFIER_1, "offer-id-1001", SPECIFIED_DATE_TIME);
+        final Optional<Offer> optional =
+                offerRepository.findActiveOffer(MERCHANT_IDENTIFIER_1, "offer-id-1001", SPECIFIED_DATE_TIME);
 
+        assertThat(optional.isPresent(), equalTo(false));
     }
 
-    @Test(expected = EmptyResultDataAccessException.class)
+    @Test
     public void findActiveOfferWhenNotInActiveDateRange() {
-        offerRepository.findActiveOffer(MERCHANT_IDENTIFIER_1, "offer-id-1002", SPECIFIED_DATE_TIME);
+        final Optional<Offer> optional =
+                offerRepository.findActiveOffer(MERCHANT_IDENTIFIER_1, "offer-id-1002", SPECIFIED_DATE_TIME);
+
+        assertThat(optional.isPresent(), equalTo(false));
     }
 }

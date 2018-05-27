@@ -1,7 +1,5 @@
 package io.halljon.offerexample.offer.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.halljon.offerexample.offer.domain.Offer;
 import io.halljon.offerexample.offer.service.OfferService;
 import org.junit.After;
@@ -10,31 +8,28 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.nio.charset.Charset;
+import java.util.Optional;
 
 import static io.halljon.offerexample.offer.domain.OfferTestUtils.createPopulatedOfferWithKnownValues;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.toJson;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(CustomerOfferController.class)
 public class CustomerOfferControllerTest {
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-
-    private final MediaType contentType =
-            new MediaType(APPLICATION_JSON.getType(), APPLICATION_JSON.getSubtype(),
-                    Charset.forName("utf8"));
+    private static final String MERCHANT_IDENTIFIER = "merchant-id-12345";
+    private static final String OFFER_IDENTIFIER = "offer-id-12345";
 
     @Autowired
     private MockMvc mockMvc;
@@ -48,33 +43,45 @@ public class CustomerOfferControllerTest {
     }
 
     @Test
-    public void findActiveOffer()
+    public void findActiveOfferWhenExists()
             throws Exception {
 
-        final String offerIdentifier = "offer-id-12345";
-        final String merchantIdentifier = "merchant-id-12345";
         final Offer offer = createPopulatedOfferWithKnownValues();
 
         when(mockOfferService
-                .findActiveOffer(merchantIdentifier, offerIdentifier)
+                .findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER)
         ).thenReturn(
-                offer
+                Optional.of(offer)
         );
 
         final MvcResult mvcResult = mockMvc.perform(
-                get("/v1/offers/{merchantIdentifier}/{offerIdentifier}", merchantIdentifier, offerIdentifier))
+                get("/v1/offers/{merchantIdentifier}/{offerIdentifier}", MERCHANT_IDENTIFIER, OFFER_IDENTIFIER))
                 .andReturn();
 
         assertThat(mvcResult.getResponse().getStatus(), equalTo(OK.value()));
         assertThat(mvcResult.getResponse().getContentAsString(), equalTo(toJson(offer)));
 
         verify(mockOfferService)
-                .findActiveOffer(merchantIdentifier, offerIdentifier);
+                .findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER);
     }
 
-    private String toJson(final Offer offer)
-            throws JsonProcessingException {
+    @Test
+    public void findActiveOfferWhenDoesNotExist()
+            throws Exception {
 
-        return OBJECT_MAPPER.writeValueAsString(offer);
+        when(mockOfferService
+                .findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER)
+        ).thenReturn(
+                Optional.empty()
+        );
+
+        final MvcResult mvcResult = mockMvc.perform(
+                get("/v1/offers/{merchantIdentifier}/{offerIdentifier}", MERCHANT_IDENTIFIER, OFFER_IDENTIFIER))
+                .andReturn();
+
+        assertThat(mvcResult.getResponse().getStatus(), equalTo(NOT_FOUND.value()));
+
+        verify(mockOfferService)
+                .findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER);
     }
 }

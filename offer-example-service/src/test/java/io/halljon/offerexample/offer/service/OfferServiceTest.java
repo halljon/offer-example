@@ -10,10 +10,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static io.halljon.offerexample.offer.common.OfferConst.DEFAULT_ZONE_ID;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -110,7 +110,7 @@ public class OfferServiceTest {
     }
 
     @Test
-    public void findActiveOffer() {
+    public void findActiveOfferWhenExists() {
         final LocalDateTime dateTime = LocalDateTime.now(DEFAULT_ZONE_ID);
         final Timestamp timestamp = Timestamp.valueOf(dateTime);
         final Offer offer = new Offer();
@@ -124,12 +124,13 @@ public class OfferServiceTest {
         when(mockOfferRepository.
                 findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER, timestamp)
         ).thenReturn(
-                offer
+                Optional.of(offer)
         );
 
-        final Offer offerFound = offerService.findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER);
+        final Optional<Offer> optional = offerService.findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER);
 
-        assertThat(offerFound, equalTo(offer));
+        assertThat(optional.isPresent(), equalTo(true));
+        assertThat(optional.get(), equalTo(offer));
 
         verify(mockDateService)
                 .getCurrentDateTime();
@@ -139,7 +140,7 @@ public class OfferServiceTest {
     }
 
     @Test
-    public void findActiveOfferWhenRepositoryThrowsException() {
+    public void findActiveOfferWhenDoesNotExist() {
         final LocalDateTime dateTime = LocalDateTime.now(DEFAULT_ZONE_ID);
         final Timestamp timestamp = Timestamp.valueOf(dateTime);
 
@@ -149,19 +150,20 @@ public class OfferServiceTest {
                 dateTime
         );
 
-        doThrow(EmptyResultDataAccessException.class).when(mockOfferRepository)
+        when(mockOfferRepository
+                .findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER, timestamp)
+        ).thenReturn(
+                Optional.empty()
+        );
+
+        final Optional<Offer> optional = offerService.findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER);
+
+        assertThat(optional.isPresent(), equalTo(false));
+
+        verify(mockDateService)
+                .getCurrentDateTime();
+
+        verify(mockOfferRepository)
                 .findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER, timestamp);
-
-        try {
-            offerService.findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER);
-        } catch (EmptyResultDataAccessException e) {
-            verify(mockDateService)
-                    .getCurrentDateTime();
-
-            verify(mockOfferRepository)
-                    .findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER, timestamp);
-        } catch (Exception e) {
-            fail(SPECIFIC_EXCEPTION_WAS_EXPECTED_BUT_DID_NOT_OCCUR);
-        }
     }
 }

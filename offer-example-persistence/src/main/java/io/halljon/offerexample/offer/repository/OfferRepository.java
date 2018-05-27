@@ -4,6 +4,7 @@ import io.halljon.offerexample.offer.domain.Offer;
 
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Optional;
 
 public interface OfferRepository {
     void saveNewOffer(Offer offer);
@@ -16,7 +17,7 @@ public interface OfferRepository {
 
     Collection<Offer> findAllOffers(String merchantIdentifier);
 
-    Offer findActiveOffer(String merchantIdentifier,
-                          String offerIdentifier,
-                          Timestamp dateTime);
+    Optional<Offer> findActiveOffer(String merchantIdentifier,
+                                    String offerIdentifier,
+                                    Timestamp dateTime);
 }

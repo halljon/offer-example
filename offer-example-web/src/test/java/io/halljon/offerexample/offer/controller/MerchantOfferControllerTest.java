@@ -1,7 +1,5 @@
 package io.halljon.offerexample.offer.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.halljon.offerexample.offer.domain.Offer;
 import io.halljon.offerexample.offer.service.OfferService;
 import org.junit.After;
@@ -20,6 +18,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.nio.charset.Charset;
 
 import static io.halljon.offerexample.offer.domain.OfferTestUtils.createPopulatedOfferWithKnownValues;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.toJson;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -34,8 +33,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @RunWith(SpringRunner.class)
 @WebMvcTest(MerchantOfferController.class)
 public class MerchantOfferControllerTest {
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-
     private final MediaType contentType =
             new MediaType(APPLICATION_JSON.getType(), APPLICATION_JSON.getSubtype(),
                     Charset.forName("utf8"));
@@ -85,11 +82,5 @@ public class MerchantOfferControllerTest {
         assertThat(captorOffer.getValue().getActiveStartDate(), equalTo(offer.getActiveStartDate()));
         assertThat(captorOffer.getValue().getActiveEndDate(), equalTo(offer.getActiveEndDate()));
         assertThat(captorOffer.getValue().getStatusCode(), equalTo(offer.getStatusCode()));
-    }
-
-    private String toJson(final Offer offer)
-            throws JsonProcessingException {
-
-        return OBJECT_MAPPER.writeValueAsString(offer);
     }
 }

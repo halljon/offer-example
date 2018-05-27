@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Optional;
 
 @Transactional
 @Service
@@ -59,8 +60,8 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
-    public Offer findActiveOffer(final String merchantIdentifier,
-                                 final String offerIdentifier) {
+    public Optional<Offer> findActiveOffer(final String merchantIdentifier,
+                                           final String offerIdentifier) {
 
         final Timestamp dateTime = Timestamp.valueOf(dateService.getCurrentDateTime());
 

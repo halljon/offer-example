@@ -2,6 +2,7 @@ package io.halljon.offerexample.offer.repository.impl;
 
 import io.halljon.offerexample.offer.domain.Offer;
 import io.halljon.offerexample.offer.repository.OfferRepository;
+import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -12,6 +13,7 @@ import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public class OfferRepositoryJdbcImpl implements OfferRepository {
@@ -90,16 +92,20 @@ public class OfferRepositoryJdbcImpl implements OfferRepository {
     }
 
     @Override
-    public Offer findActiveOffer(final String merchantIdentifier,
-                                 final String offerIdentifier,
-                                 final Timestamp dateTime) {
+    public Optional<Offer> findActiveOffer(final String merchantIdentifier,
+                                           final String offerIdentifier,
+                                           final Timestamp dateTime) {
 
         final Map<String, Object> values = new HashMap<>();
         values.put(OFFER_MERCHANT_ID_COLUMN, merchantIdentifier);
         values.put(OFFER_OFFER_ID_COLUMN, offerIdentifier);
         values.put("specified_date", dateTime);
 
-        return namedParameterJdbcTemplate.queryForObject(FIND_ACTIVE_OFFER_SQL, values, new OfferRowMapper());
+        final Offer offer = DataAccessUtils.singleResult(
+                namedParameterJdbcTemplate.query(FIND_ACTIVE_OFFER_SQL, values, new OfferRowMapper()));
+
+        return Optional.ofNullable(offer);
+
     }
 
     private static final class OfferRowMapper implements RowMapper<Offer> {
