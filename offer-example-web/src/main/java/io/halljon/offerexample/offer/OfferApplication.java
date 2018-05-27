@@ -1,11 +1,11 @@
-package io.halljon.offerexample.database;
+package io.halljon.offerexample.offer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BootstrapDatabaseBuilderApplication {
+public class OfferApplication {
     public static void main(String[] args) {
-        SpringApplication.run(BootstrapDatabaseBuilderApplication.class, args);
+        SpringApplication.run(OfferApplication.class, args);
     }
 }
