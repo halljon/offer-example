@@ -22,7 +22,7 @@ public final class OfferTestUtils {
         // Private constructor to prevent creation
     }
 
-    public static Offer createPopulatedOffer() {
+    public static Offer createPopulatedOfferWithKnownValues() {
         final Offer offer = new Offer();
         offer.setOfferIdentifier(KNOWN_OFFER_IDENTIFIER_1);
         offer.setMerchantIdentifier(KNOWN_MERCHANT_IDENTIFIER_1);

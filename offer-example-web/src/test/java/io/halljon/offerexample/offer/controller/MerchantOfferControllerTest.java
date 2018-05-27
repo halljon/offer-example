@@ -26,7 +26,7 @@ import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_DESCRIPT
 import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_OFFERING_IDENTIFIER_1;
 import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_PRICE_1;
 import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_STATUS_CODE_1;
-import static io.halljon.offerexample.offer.domain.OfferTestUtils.createPopulatedOffer;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.createPopulatedOfferWithKnownValues;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -75,7 +75,7 @@ public class MerchantOfferControllerTest {
         final MvcResult mvcResult = mockMvc.perform(
                 post("/v1/offers/" + merchantIdentifier)
                         .contentType(contentType)
-                        .content(toJson(createPopulatedOffer())))
+                        .content(toJson(createPopulatedOfferWithKnownValues())))
                 .andReturn();
 
         assertThat(mvcResult.getResponse().getStatus(), equalTo(OK.value()));

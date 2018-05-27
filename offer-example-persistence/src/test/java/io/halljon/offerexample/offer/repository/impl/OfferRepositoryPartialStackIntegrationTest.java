@@ -25,7 +25,7 @@ import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_OFFERING
 import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_OFFER_IDENTIFIER_1;
 import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_PRICE_1;
 import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_STATUS_CODE_1;
-import static io.halljon.offerexample.offer.domain.OfferTestUtils.createPopulatedOffer;
+import static io.halljon.offerexample.offer.domain.OfferTestUtils.createPopulatedOfferWithKnownValues;
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
@@ -44,7 +44,7 @@ public class OfferRepositoryPartialStackIntegrationTest {
 
     @Test
     public void saveNewOffer() {
-        offerRepository.saveOffer(createPopulatedOffer());
+        offerRepository.saveOffer(createPopulatedOfferWithKnownValues());
 
         final Map<String, Object> values = namedParameterJdbcTemplate.queryForMap(
                 "SELECT * FROM OFFER WHERE offer_id = :offer_id", singletonMap("offer_id", KNOWN_OFFER_IDENTIFIER_1));
@@ -62,7 +62,7 @@ public class OfferRepositoryPartialStackIntegrationTest {
 
     @Test(expected = DataIntegrityViolationException.class)
     public void saveNewOfferWithInvalidCurrencyCode() {
-        final Offer offer = createPopulatedOffer();
+        final Offer offer = createPopulatedOfferWithKnownValues();
         offer.setCurrencyCode("Z!Z");
 
         offerRepository.saveOffer(offer);
