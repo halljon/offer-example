@@ -6,17 +6,17 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 public final class OfferTestUtils {
-    public static final ZoneId DEFAULT_ZONE_ID = ZoneId.of("UTC");
-    public static final LocalDateTime LOCAL_DATE_TIME_NOW = LocalDateTime.now(DEFAULT_ZONE_ID);
-    public static final String KNOWN_OFFER_IDENTIFIER_1 = "offer-123";
-    public static final String KNOWN_MERCHANT_IDENTIFIER_1 = "merchant-123";
-    public static final String KNOWN_DESCRIPTION_1 = "DESCRIPTION-123";
-    public static final String KNOWN_OFFERING_IDENTIFIER_1 = "offering-123";
-    public static final BigDecimal KNOWN_PRICE_1 = new BigDecimal("1.23");
-    public static final String KNOWN_CURRENCY_CODE_1 = "USD";
-    public static final Timestamp KNOWN_ACTIVE_START_DATE_1 = Timestamp.valueOf(LOCAL_DATE_TIME_NOW.minusDays(12));
-    public static final Timestamp KNOWN_ACTIVE_END_DATE_1 = Timestamp.valueOf(LOCAL_DATE_TIME_NOW.plusDays(23));
-    public static final String KNOWN_STATUS_CODE_1 = "A";
+    private static final ZoneId DEFAULT_ZONE_ID = ZoneId.of("UTC");
+    private static final LocalDateTime LOCAL_DATE_TIME_NOW = LocalDateTime.now(DEFAULT_ZONE_ID);
+    private static final String KNOWN_OFFER_IDENTIFIER_1 = "offer-123";
+    private static final String KNOWN_MERCHANT_IDENTIFIER_1 = "merchant-123";
+    private static final String KNOWN_DESCRIPTION_1 = "DESCRIPTION-123";
+    private static final String KNOWN_OFFERING_IDENTIFIER_1 = "offering-123";
+    private static final BigDecimal KNOWN_PRICE_1 = new BigDecimal("1.23");
+    private static final String KNOWN_CURRENCY_CODE_1 = "USD";
+    private static final Timestamp KNOWN_ACTIVE_START_DATE_1 = Timestamp.valueOf(LOCAL_DATE_TIME_NOW.minusDays(12));
+    private static final Timestamp KNOWN_ACTIVE_END_DATE_1 = Timestamp.valueOf(LOCAL_DATE_TIME_NOW.plusDays(23));
+    private static final String KNOWN_STATUS_CODE_1 = "A";
 
     private OfferTestUtils() {
         // Private constructor to prevent creation

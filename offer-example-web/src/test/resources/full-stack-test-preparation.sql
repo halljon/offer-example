@@ -1,3 +1,3 @@
 DELETE
 FROM offer
-WHERE merchant_id = 'abc';
+WHERE merchant_id = 'full-stack-merchant-id';

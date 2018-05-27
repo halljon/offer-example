@@ -19,13 +19,6 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.nio.charset.Charset;
 
-import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_ACTIVE_END_DATE_1;
-import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_ACTIVE_START_DATE_1;
-import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_CURRENCY_CODE_1;
-import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_DESCRIPTION_1;
-import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_OFFERING_IDENTIFIER_1;
-import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_PRICE_1;
-import static io.halljon.offerexample.offer.domain.OfferTestUtils.KNOWN_STATUS_CODE_1;
 import static io.halljon.offerexample.offer.domain.OfferTestUtils.createPopulatedOfferWithKnownValues;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
@@ -65,6 +58,7 @@ public class MerchantOfferControllerTest {
     public void createNewOffer()
             throws Exception {
 
+        final Offer offer = createPopulatedOfferWithKnownValues();
         final String merchantIdentifier = "merchant-id-12345";
         final String expectedOfferIdentifier = "offer-id-12345";
 
@@ -75,7 +69,7 @@ public class MerchantOfferControllerTest {
         final MvcResult mvcResult = mockMvc.perform(
                 post("/v1/offers/" + merchantIdentifier)
                         .contentType(contentType)
-                        .content(toJson(createPopulatedOfferWithKnownValues())))
+                        .content(toJson(offer)))
                 .andReturn();
 
         assertThat(mvcResult.getResponse().getStatus(), equalTo(OK.value()));
@@ -84,13 +78,13 @@ public class MerchantOfferControllerTest {
         verify(mockOfferService)
                 .createNewOffer(eq(merchantIdentifier), captorOffer.capture());
 
-        assertThat(captorOffer.getValue().getDescription(), equalTo(KNOWN_DESCRIPTION_1));
-        assertThat(captorOffer.getValue().getOfferingIdentifier(), equalTo(KNOWN_OFFERING_IDENTIFIER_1));
-        assertThat(captorOffer.getValue().getPrice(), equalTo(KNOWN_PRICE_1));
-        assertThat(captorOffer.getValue().getCurrencyCode(), equalTo(KNOWN_CURRENCY_CODE_1));
-        assertThat(captorOffer.getValue().getActiveStartDate(), equalTo(KNOWN_ACTIVE_START_DATE_1));
-        assertThat(captorOffer.getValue().getActiveEndDate(), equalTo(KNOWN_ACTIVE_END_DATE_1));
-        assertThat(captorOffer.getValue().getStatusCode(), equalTo(KNOWN_STATUS_CODE_1));
+        assertThat(captorOffer.getValue().getDescription(), equalTo(offer.getDescription()));
+        assertThat(captorOffer.getValue().getOfferingIdentifier(), equalTo(offer.getOfferingIdentifier()));
+        assertThat(captorOffer.getValue().getPrice(), equalTo(offer.getPrice()));
+        assertThat(captorOffer.getValue().getCurrencyCode(), equalTo(offer.getCurrencyCode()));
+        assertThat(captorOffer.getValue().getActiveStartDate(), equalTo(offer.getActiveStartDate()));
+        assertThat(captorOffer.getValue().getActiveEndDate(), equalTo(offer.getActiveEndDate()));
+        assertThat(captorOffer.getValue().getStatusCode(), equalTo(offer.getStatusCode()));
     }
 
     private String toJson(final Offer offer)

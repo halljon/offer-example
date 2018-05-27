@@ -5,9 +5,11 @@ import io.halljon.offerexample.offer.repository.OfferRepository;
 import io.halljon.offerexample.offer.service.IdentifierGenerator;
 import io.halljon.offerexample.offer.service.OfferService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 
+@Transactional
 @Service
 public class OfferServiceImpl implements OfferService {
     private final OfferRepository offerRepository;
