@@ -21,7 +21,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import static io.halljon.offerexample.offer.common.OfferConst.OFFER_STATUS_CODE_ACTIVE;
+import static io.halljon.offerexample.offer.common.OfferConst.OFFER_STATUS_CODE_CANCELLED;
 import static io.halljon.offerexample.offer.domain.OfferTestUtils.createPopulatedOfferWithKnownValues;
+import static io.halljon.offerexample.offer.repository.impl.OfferJdbcTestUtils.findOfferStatusCode;
+import static io.halljon.offerexample.offer.repository.impl.OfferJdbcTestUtils.findOfferValues;
 import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_ACTIVE_END_DATE_COLUMN;
 import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_ACTIVE_START_DATE_COLUMN;
 import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_CURRENCY_CODE_COLUMN;
@@ -31,18 +34,15 @@ import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcI
 import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_OFFER_ID_COLUMN;
 import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_PRICE_COLUMN;
 import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_STATUS_CODE_COLUMN;
-import static java.util.Collections.singletonMap;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {OfferPersistenceConfiguration.class})
 @EnableAutoConfiguration
 @Rollback
 @Transactional
-@Sql(scripts = "classpath:sql/repository-test-preparation.sql", executionPhase = BEFORE_TEST_METHOD)
-public class OfferRepositoryPartialStackIntegrationTest {
+public class OfferRepositoryJdbcImplPartialStackIntegrationTest {
     private static final String MERCHANT_IDENTIFIER_1 = "repository-test-merchant-id-1";
     private static final Timestamp SPECIFIED_DATE_TIME = Timestamp.valueOf("2018-01-15 12:13:14");
 
@@ -58,9 +58,7 @@ public class OfferRepositoryPartialStackIntegrationTest {
 
         offerRepository.saveNewOffer(offer);
 
-        final Map<String, Object> values = namedParameterJdbcTemplate.queryForMap(
-                "SELECT * FROM OFFER WHERE offer_id = :offer_id",
-                singletonMap(OFFER_OFFER_ID_COLUMN, offer.getOfferIdentifier()));
+        final Map<String, Object> values = findOfferValues(namedParameterJdbcTemplate, offer.getOfferIdentifier());
 
         assertThat(values.get(OFFER_OFFER_ID_COLUMN), equalTo(offer.getOfferIdentifier()));
         assertThat(values.get(OFFER_MERCHANT_ID_COLUMN), equalTo(offer.getMerchantIdentifier()));
@@ -81,11 +79,13 @@ public class OfferRepositoryPartialStackIntegrationTest {
         offerRepository.saveNewOffer(offer);
     }
 
+    @Sql(scripts = "classpath:sql/test-find-active-offer.sql")
     @Test
-    public void findActiveOfferWhenExists() {
-        final String offerIdentifier = "offer-id-1004";
+    public void findActiveOfferWhenItExists() {
+        final String offerIdentifier = "repository-test-offer-id-1004";
 
-        final Optional<Offer> optional = offerRepository.findActiveOffer(MERCHANT_IDENTIFIER_1, offerIdentifier, SPECIFIED_DATE_TIME);
+        final Optional<Offer> optional =
+                offerRepository.findActiveOffer(MERCHANT_IDENTIFIER_1, offerIdentifier, SPECIFIED_DATE_TIME);
 
         assertThat(optional.isPresent(), equalTo(true));
 
@@ -102,19 +102,45 @@ public class OfferRepositoryPartialStackIntegrationTest {
         assertThat(offer.getStatusCode(), equalTo(OFFER_STATUS_CODE_ACTIVE));
     }
 
+    @Sql(scripts = "classpath:sql/test-find-active-offer-when-not-active.sql")
     @Test
     public void findActiveOfferWhenNotActive() {
         final Optional<Offer> optional =
-                offerRepository.findActiveOffer(MERCHANT_IDENTIFIER_1, "offer-id-1001", SPECIFIED_DATE_TIME);
+                offerRepository.findActiveOffer(MERCHANT_IDENTIFIER_1, "repository-test-offer-id-1001", SPECIFIED_DATE_TIME);
 
         assertThat(optional.isPresent(), equalTo(false));
     }
 
+    @Sql(scripts = "classpath:sql/test-find-active-offer-when-not-in-active-date-range.sql")
     @Test
     public void findActiveOfferWhenNotInActiveDateRange() {
         final Optional<Offer> optional =
-                offerRepository.findActiveOffer(MERCHANT_IDENTIFIER_1, "offer-id-1002", SPECIFIED_DATE_TIME);
+                offerRepository.findActiveOffer(MERCHANT_IDENTIFIER_1, "repository-test-offer-id-1002", SPECIFIED_DATE_TIME);
 
         assertThat(optional.isPresent(), equalTo(false));
+    }
+
+    @Sql(scripts = "classpath:sql/test-cancel-offer.sql")
+    @Test
+    public void cancelOfferWhenItExists() {
+        final String offerIdentifier = "repository-test-offer-id-1008";
+
+        final boolean cancelled = offerRepository.cancelOffer(MERCHANT_IDENTIFIER_1, offerIdentifier);
+
+        assertThat(cancelled, equalTo(true));
+
+        final String statusCode = findOfferStatusCode(namedParameterJdbcTemplate, offerIdentifier);
+
+        assertThat(statusCode, equalTo(OFFER_STATUS_CODE_CANCELLED));
+    }
+
+    @Test
+    public void cancelOfferWhenItDoesNotExist() {
+        final String offerIdentifier = "repository-test-offer-id-9999";
+
+        final boolean cancelled = offerRepository.cancelOffer(MERCHANT_IDENTIFIER_1, offerIdentifier);
+
+        assertThat(cancelled, equalTo(false));
+
     }
 }

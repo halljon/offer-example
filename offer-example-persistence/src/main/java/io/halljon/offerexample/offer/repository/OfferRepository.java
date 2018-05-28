@@ -9,8 +9,8 @@ import java.util.Optional;
 public interface OfferRepository {
     void saveNewOffer(Offer offer);
 
-    void cancelOffer(String merchantIdentifier,
-                     String offerIdentifier);
+    boolean cancelOffer(String merchantIdentifier,
+                        String offerIdentifier);
 
     Collection<Offer> findActiveOffers(String merchantIdentifier,
                                        Timestamp dateTime);

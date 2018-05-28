@@ -2,12 +2,16 @@ package io.halljon.offerexample.offer.controller;
 
 import io.halljon.offerexample.offer.domain.Offer;
 import io.halljon.offerexample.offer.service.OfferService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping("/v1/offers")
@@ -26,17 +30,12 @@ public class MerchantOfferController {
     }
 
     @DeleteMapping(value = "/{merchantIdentifier}/{offerIdentifier}")
-    public void cancelOffer(@PathVariable("merchantIdentifier") final String merchantIdentifier,
-                            @PathVariable("offerIdentifier") final String offerIdentifier) {
+    public ResponseEntity<Void> cancelOffer(@PathVariable("merchantIdentifier") final String merchantIdentifier,
+                                            @PathVariable("offerIdentifier") final String offerIdentifier) {
 
-        if (true) {
-            throw new UnsupportedOperationException();
-        }
 
-        /*
-            If found and then deleted, then return good code
-            If not found, then return 404?
-         */
-        offerService.cancelOffer(merchantIdentifier, offerIdentifier);
+        boolean cancelled = offerService.cancelOffer(merchantIdentifier, offerIdentifier);
+
+        return cancelled ? new ResponseEntity<>(OK) : new ResponseEntity<>(NOT_FOUND);
     }
 }

@@ -2,7 +2,7 @@ package io.halljon.offerexample.offer.service.impl;
 
 import io.halljon.offerexample.offer.domain.Offer;
 import io.halljon.offerexample.offer.repository.OfferRepository;
-import io.halljon.offerexample.offer.service.DateService;
+import io.halljon.offerexample.offer.service.DateTimeService;
 import io.halljon.offerexample.offer.service.IdentifierGenerator;
 import io.halljon.offerexample.offer.service.OfferService;
 import org.slf4j.Logger;
@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -21,15 +22,15 @@ public class OfferServiceImpl implements OfferService {
 
     private final OfferRepository offerRepository;
     private final IdentifierGenerator generator;
-    private final DateService dateService;
+    private final DateTimeService dateTimeService;
 
     public OfferServiceImpl(final OfferRepository offerRepository,
                             final IdentifierGenerator generator,
-                            final DateService dateService) {
+                            final DateTimeService dateTimeService) {
 
         this.offerRepository = offerRepository;
         this.generator = generator;
-        this.dateService = dateService;
+        this.dateTimeService = dateTimeService;
     }
 
     @Override
@@ -40,7 +41,8 @@ public class OfferServiceImpl implements OfferService {
         offer.setOfferIdentifier(identifier);
         offer.setMerchantIdentifier(merchantIdentifier);
 
-        LOGGER.trace("About to create new offer for merchant: '{}', with offer identifier: '{}'", merchantIdentifier, identifier);
+        LOGGER.debug("About to create new offer for merchant: '{}', with offer identifier: '{}'",
+                merchantIdentifier, identifier);
 
         offerRepository.saveNewOffer(offer);
 
@@ -48,10 +50,13 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
-    public void cancelOffer(final String merchantIdentifier,
-                            final String offerIdentifier) {
+    public boolean cancelOffer(final String merchantIdentifier,
+                               final String offerIdentifier) {
 
-        throw new UnsupportedOperationException();
+        LOGGER.debug("About to cancel offer for merchant: '{}', with offer identifier: '{}'",
+                merchantIdentifier, offerIdentifier);
+
+        return offerRepository.cancelOffer(merchantIdentifier, offerIdentifier);
     }
 
     @Override
@@ -63,8 +68,12 @@ public class OfferServiceImpl implements OfferService {
     public Optional<Offer> findActiveOffer(final String merchantIdentifier,
                                            final String offerIdentifier) {
 
-        final Timestamp dateTime = Timestamp.valueOf(dateService.getCurrentDateTime());
+        final LocalDateTime dateTime = dateTimeService.getCurrentDateTime();
+        final Timestamp timestamp = Timestamp.valueOf(dateTime);
 
-        return offerRepository.findActiveOffer(merchantIdentifier, offerIdentifier, dateTime);
+        LOGGER.debug("About to find active offer for merchant: '{}', with offer identifier: '{}' using current time: '{}'",
+                merchantIdentifier, offerIdentifier, dateTime);
+
+        return offerRepository.findActiveOffer(merchantIdentifier, offerIdentifier, timestamp);
     }
 }

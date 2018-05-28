@@ -19,7 +19,10 @@ import java.sql.Timestamp;
 import java.util.Map;
 
 import static io.halljon.offerexample.offer.common.OfferConst.OFFER_STATUS_CODE_ACTIVE;
+import static io.halljon.offerexample.offer.common.OfferConst.OFFER_STATUS_CODE_CANCELLED;
 import static io.halljon.offerexample.offer.domain.OfferTestUtils.createPopulatedOfferWithKnownValues;
+import static io.halljon.offerexample.offer.repository.impl.OfferJdbcTestUtils.findOfferStatusCode;
+import static io.halljon.offerexample.offer.repository.impl.OfferJdbcTestUtils.findOfferValues;
 import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_ACTIVE_END_DATE_COLUMN;
 import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_ACTIVE_START_DATE_COLUMN;
 import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_CURRENCY_CODE_COLUMN;
@@ -29,11 +32,11 @@ import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcI
 import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_OFFER_ID_COLUMN;
 import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_PRICE_COLUMN;
 import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_STATUS_CODE_COLUMN;
-import static java.util.Collections.singletonMap;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpStatus.OK;
@@ -44,6 +47,7 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 @Sql(scripts = "classpath:sql/full-stack-test-preparation.sql", executionPhase = BEFORE_TEST_METHOD)
 public class OfferApplicationFullStackIntegrationTest {
     private static final String MERCHANT_IDENTIFIER = "full-stack-test-merchant-id";
+    private static final String OFFER_IDENTIFIER = "full-stack-test-offer-id-1001";
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -68,9 +72,7 @@ public class OfferApplicationFullStackIntegrationTest {
 
         final String identifierOfCreatedOffer = response.getBody();
 
-        final Map<String, Object> values = namedParameterJdbcTemplate.queryForMap(
-                "SELECT * FROM offer WHERE offer_id = :offer_id",
-                singletonMap(OFFER_OFFER_ID_COLUMN, identifierOfCreatedOffer));
+        final Map<String, Object> values = findOfferValues(namedParameterJdbcTemplate, identifierOfCreatedOffer);
 
         assertThat(values.get(OFFER_OFFER_ID_COLUMN), equalTo(identifierOfCreatedOffer));
         assertThat(values.get(OFFER_MERCHANT_ID_COLUMN), equalTo(MERCHANT_IDENTIFIER));
@@ -84,19 +86,18 @@ public class OfferApplicationFullStackIntegrationTest {
     }
 
     @Test
-    public void findActiveOfferWhenExists() {
-        final String offerIdentifier = "offer-id-1004";
-
+    public void findActiveOfferWhenItExists() {
         final ResponseEntity<Offer> response = restTemplate.exchange(
-                "http://localhost:" + port + "/v1/offers/{merchantIdentifier}/{offerIdentifier}", GET, null, Offer.class,
-                MERCHANT_IDENTIFIER, offerIdentifier);
+                "http://localhost:" + port + "/v1/offers/{merchantIdentifier}/{offerIdentifier}",
+                GET, null, Offer.class,
+                MERCHANT_IDENTIFIER, OFFER_IDENTIFIER);
 
         assertThat(response.getStatusCode(), equalTo(OK));
         assertThat(response.getBody(), notNullValue());
 
         final Offer offer = response.getBody();
 
-        assertThat(offer.getOfferIdentifier(), equalTo(offerIdentifier));
+        assertThat(offer.getOfferIdentifier(), equalTo(OFFER_IDENTIFIER));
         assertThat(offer.getMerchantIdentifier(), equalTo(MERCHANT_IDENTIFIER));
         assertThat(offer.getDescription(), equalTo("Some really interesting offer 1004"));
         assertThat(offer.getOfferingIdentifier(), equalTo("offering-id-1"));
@@ -105,5 +106,19 @@ public class OfferApplicationFullStackIntegrationTest {
         assertThat(offer.getActiveStartDate(), equalTo(Timestamp.valueOf("2018-01-01 00:00:00")));
         assertThat(offer.getActiveEndDate(), equalTo(Timestamp.valueOf("2028-01-31 23:59:59")));
         assertThat(offer.getStatusCode(), equalTo(OFFER_STATUS_CODE_ACTIVE));
+    }
+
+    @Test
+    public void cancelOfferWhenItExist() {
+        final ResponseEntity<Offer> response = restTemplate.exchange(
+                "http://localhost:" + port + "/v1/offers/{merchantIdentifier}/{offerIdentifier}",
+                DELETE, null, Offer.class,
+                MERCHANT_IDENTIFIER, OFFER_IDENTIFIER);
+
+        assertThat(response.getStatusCode(), equalTo(OK));
+
+        final String statusCode = findOfferStatusCode(namedParameterJdbcTemplate, OFFER_IDENTIFIER);
+
+        assertThat(statusCode, equalTo(OFFER_STATUS_CODE_CANCELLED));
     }
 }

@@ -26,16 +26,20 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(MerchantOfferController.class)
 public class MerchantOfferControllerTest {
-    private final MediaType contentType =
-            new MediaType(APPLICATION_JSON.getType(), APPLICATION_JSON.getSubtype(),
-                    Charset.forName("utf8"));
+    private static final String MERCHANT_IDENTIFIER = "merchant-id-12345";
+    private static final String OFFER_IDENTIFIER = "offer-id-12345";
+
+    private static final MediaType CONTENT_TYPE =
+            new MediaType(APPLICATION_JSON.getType(), APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
     @Autowired
     private MockMvc mockMvc;
@@ -56,24 +60,24 @@ public class MerchantOfferControllerTest {
             throws Exception {
 
         final Offer offer = createPopulatedOfferWithKnownValues();
-        final String merchantIdentifier = "merchant-id-12345";
-        final String expectedOfferIdentifier = "offer-id-12345";
 
         when(mockOfferService
-                .createNewOffer(eq(merchantIdentifier), any(Offer.class))
-        ).thenReturn(expectedOfferIdentifier);
+                .createNewOffer(eq(MERCHANT_IDENTIFIER), any(Offer.class))
+        ).thenReturn(
+                OFFER_IDENTIFIER
+        );
 
         final MvcResult mvcResult = mockMvc.perform(
-                post("/v1/offers/{merchantIdentifier}", merchantIdentifier)
-                        .contentType(contentType)
+                post("/v1/offers/{merchantIdentifier}", MERCHANT_IDENTIFIER)
+                        .contentType(CONTENT_TYPE)
                         .content(toJson(offer)))
                 .andReturn();
 
         assertThat(mvcResult.getResponse().getStatus(), equalTo(OK.value()));
-        assertThat(mvcResult.getResponse().getContentAsString(), equalTo(expectedOfferIdentifier));
+        assertThat(mvcResult.getResponse().getContentAsString(), equalTo(OFFER_IDENTIFIER));
 
         verify(mockOfferService)
-                .createNewOffer(eq(merchantIdentifier), captorOffer.capture());
+                .createNewOffer(eq(MERCHANT_IDENTIFIER), captorOffer.capture());
 
         assertThat(captorOffer.getValue().getDescription(), equalTo(offer.getDescription()));
         assertThat(captorOffer.getValue().getOfferingIdentifier(), equalTo(offer.getOfferingIdentifier()));
@@ -82,5 +86,44 @@ public class MerchantOfferControllerTest {
         assertThat(captorOffer.getValue().getActiveStartDate(), equalTo(offer.getActiveStartDate()));
         assertThat(captorOffer.getValue().getActiveEndDate(), equalTo(offer.getActiveEndDate()));
         assertThat(captorOffer.getValue().getStatusCode(), equalTo(offer.getStatusCode()));
+    }
+
+    @Test
+    public void cancelOfferWhenItExists()
+            throws Exception {
+
+        when(mockOfferService
+                .cancelOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER)
+        ).thenReturn(
+                true
+        );
+
+        final MvcResult mvcResult = mockMvc.perform(
+                delete("/v1/offers/{merchantIdentifier}/{offerIdentifier}", MERCHANT_IDENTIFIER, OFFER_IDENTIFIER))
+                .andReturn();
+
+        assertThat(mvcResult.getResponse().getStatus(), equalTo(OK.value()));
+        verify(mockOfferService)
+                .cancelOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER);
+    }
+
+    @Test
+    public void cancelOfferWhenItDoesNotExist()
+            throws Exception {
+
+        when(mockOfferService
+                .cancelOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER)
+        ).thenReturn(
+                false
+        );
+
+        final MvcResult mvcResult = mockMvc.perform(
+                delete("/v1/offers/{merchantIdentifier}/{offerIdentifier}", MERCHANT_IDENTIFIER, OFFER_IDENTIFIER))
+                .andReturn();
+
+        assertThat(mvcResult.getResponse().getStatus(), equalTo(NOT_FOUND.value()));
+
+        verify(mockOfferService)
+                .cancelOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER);
     }
 }

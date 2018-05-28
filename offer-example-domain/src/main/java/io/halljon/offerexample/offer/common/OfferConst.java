@@ -7,6 +7,7 @@ public final class OfferConst {
 
     //TODO: JH - change status codes to enum and then do mapping in repository
     public static final String OFFER_STATUS_CODE_ACTIVE = "A";
+    public static final String OFFER_STATUS_CODE_CANCELLED = "C";
 
     private OfferConst() {
         // Private constructor to prevent creation
