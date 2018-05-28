@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -91,14 +90,14 @@ public class OfferServiceTest {
                 OFFER_IDENTIFIER
         );
 
-        doThrow(DataIntegrityViolationException.class).when(mockOfferRepository)
+        doThrow(RuntimeException.class).when(mockOfferRepository)
                 .saveNewOffer(offer);
 
         try {
             offerService.createNewOffer(MERCHANT_IDENTIFIER, offer);
 
             fail(SPECIFIC_EXCEPTION_WAS_EXPECTED_BUT_DID_NOT_OCCUR);
-        } catch (DataIntegrityViolationException e) {
+        } catch (RuntimeException e) {
             verify(mockGenerator)
                     .generateIdentifier();
 
@@ -165,5 +164,23 @@ public class OfferServiceTest {
 
         verify(mockOfferRepository)
                 .findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER, timestamp);
+    }
+
+    @Test
+    public void cancelOffer() {
+        final boolean expectedResult = true;
+
+        when(mockOfferRepository
+                .cancelOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER)
+        ).thenReturn(
+                expectedResult
+        );
+
+        final boolean cancelled = offerService.cancelOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER);
+
+        assertThat(cancelled, equalTo(expectedResult));
+
+        verify(mockOfferRepository)
+                .cancelOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER);
     }
 }
