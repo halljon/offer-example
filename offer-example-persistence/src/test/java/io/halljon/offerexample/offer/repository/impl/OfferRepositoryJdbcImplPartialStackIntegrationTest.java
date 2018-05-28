@@ -42,7 +42,7 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 @Rollback
 @Transactional
 @Sql(scripts = "classpath:sql/repository-test-preparation.sql", executionPhase = BEFORE_TEST_METHOD)
-public class OfferRepositoryPartialStackIntegrationTest {
+public class OfferRepositoryJdbcImplPartialStackIntegrationTest {
     private static final String MERCHANT_IDENTIFIER_1 = "repository-test-merchant-id-1";
     private static final Timestamp SPECIFIED_DATE_TIME = Timestamp.valueOf("2018-01-15 12:13:14");
 
@@ -83,9 +83,10 @@ public class OfferRepositoryPartialStackIntegrationTest {
 
     @Test
     public void findActiveOfferWhenExists() {
-        final String offerIdentifier = "offer-id-1004";
+        final String offerIdentifier = "repository-test-offer-id-1004";
 
-        final Optional<Offer> optional = offerRepository.findActiveOffer(MERCHANT_IDENTIFIER_1, offerIdentifier, SPECIFIED_DATE_TIME);
+        final Optional<Offer> optional =
+                offerRepository.findActiveOffer(MERCHANT_IDENTIFIER_1, offerIdentifier, SPECIFIED_DATE_TIME);
 
         assertThat(optional.isPresent(), equalTo(true));
 

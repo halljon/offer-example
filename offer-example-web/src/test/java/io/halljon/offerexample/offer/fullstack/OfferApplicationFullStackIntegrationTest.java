@@ -85,10 +85,11 @@ public class OfferApplicationFullStackIntegrationTest {
 
     @Test
     public void findActiveOfferWhenExists() {
-        final String offerIdentifier = "offer-id-1004";
+        final String offerIdentifier = "full-stack-test-offer-id-1001";
 
         final ResponseEntity<Offer> response = restTemplate.exchange(
-                "http://localhost:" + port + "/v1/offers/{merchantIdentifier}/{offerIdentifier}", GET, null, Offer.class,
+                "http://localhost:" + port + "/v1/offers/{merchantIdentifier}/{offerIdentifier}",
+                GET, null, Offer.class,
                 MERCHANT_IDENTIFIER, offerIdentifier);
 
         assertThat(response.getStatusCode(), equalTo(OK));
