@@ -99,7 +99,7 @@ public class OfferApplicationFullStackIntegrationTest {
 
         assertThat(offer.getOfferIdentifier(), equalTo(OFFER_IDENTIFIER));
         assertThat(offer.getMerchantIdentifier(), equalTo(MERCHANT_IDENTIFIER));
-        assertThat(offer.getDescription(), equalTo("Some really interesting offer 1001"));
+        assertThat(offer.getDescription(), equalTo("Interesting offer 1001"));
         assertThat(offer.getOfferingIdentifier(), equalTo("offering-id-1"));
         assertThat(offer.getPrice(), equalTo(new BigDecimal("12.34")));
         assertThat(offer.getCurrencyCode(), equalTo("GBP"));

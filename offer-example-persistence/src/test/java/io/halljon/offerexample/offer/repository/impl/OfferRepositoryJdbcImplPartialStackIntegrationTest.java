@@ -94,7 +94,7 @@ public class OfferRepositoryJdbcImplPartialStackIntegrationTest {
 
         assertThat(offer.getOfferIdentifier(), equalTo(offerIdentifier));
         assertThat(offer.getMerchantIdentifier(), equalTo(MERCHANT_IDENTIFIER_1));
-        assertThat(offer.getDescription(), equalTo("Some really interesting offer 1004"));
+        assertThat(offer.getDescription(), equalTo("Interesting offer 1004"));
         assertThat(offer.getOfferingIdentifier(), equalTo("offering-id-1"));
         assertThat(offer.getPrice(), equalTo(new BigDecimal("12.34")));
         assertThat(offer.getCurrencyCode(), equalTo("GBP"));
