@@ -43,7 +43,7 @@ public class CustomerOfferControllerTest {
     }
 
     @Test
-    public void findActiveOfferWhenExists()
+    public void findActiveOfferWhenItExists()
             throws Exception {
 
         final Offer offer = createPopulatedOfferWithKnownValues();
@@ -66,7 +66,7 @@ public class CustomerOfferControllerTest {
     }
 
     @Test
-    public void findActiveOfferWhenDoesNotExist()
+    public void findActiveOfferWhenItDoesNotExist()
             throws Exception {
 
         when(mockOfferService

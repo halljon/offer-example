@@ -82,7 +82,7 @@ public class OfferRepositoryJdbcImplPartialStackIntegrationTest {
 
     @Sql(scripts = "classpath:sql/test-find-active-offer.sql")
     @Test
-    public void findActiveOfferWhenExists() {
+    public void findActiveOfferWhenItExists() {
         final String offerIdentifier = "repository-test-offer-id-1004";
 
         final Optional<Offer> optional =
@@ -123,7 +123,7 @@ public class OfferRepositoryJdbcImplPartialStackIntegrationTest {
 
     @Sql(scripts = "classpath:sql/test-cancel-offer.sql")
     @Test
-    public void cancelOfferWhenExists() {
+    public void cancelOfferWhenItExists() {
         final String offerIdentifier = "repository-test-offer-id-1008";
 
         final boolean cancelled = offerRepository.cancelOffer(MERCHANT_IDENTIFIER_1, offerIdentifier);
@@ -138,7 +138,7 @@ public class OfferRepositoryJdbcImplPartialStackIntegrationTest {
     }
 
     @Test
-    public void cancelOfferWhenDoesNotExist() {
+    public void cancelOfferWhenItDoesNotExist() {
         final String offerIdentifier = "repository-test-offer-id-9999";
 
         final boolean cancelled = offerRepository.cancelOffer(MERCHANT_IDENTIFIER_1, offerIdentifier);

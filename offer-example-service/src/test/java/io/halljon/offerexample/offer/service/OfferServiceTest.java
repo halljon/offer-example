@@ -109,7 +109,7 @@ public class OfferServiceTest {
     }
 
     @Test
-    public void findActiveOfferWhenExists() {
+    public void findActiveOfferWhenItExists() {
         final LocalDateTime dateTime = LocalDateTime.now(DEFAULT_ZONE_ID);
         final Timestamp timestamp = Timestamp.valueOf(dateTime);
         final Offer offer = new Offer();
@@ -139,7 +139,7 @@ public class OfferServiceTest {
     }
 
     @Test
-    public void findActiveOfferWhenDoesNotExist() {
+    public void findActiveOfferWhenItDoesNotExist() {
         final LocalDateTime dateTime = LocalDateTime.now(DEFAULT_ZONE_ID);
         final Timestamp timestamp = Timestamp.valueOf(dateTime);
 

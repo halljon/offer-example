@@ -84,7 +84,7 @@ public class OfferApplicationFullStackIntegrationTest {
     }
 
     @Test
-    public void findActiveOfferWhenExists() {
+    public void findActiveOfferWhenItExists() {
         final String offerIdentifier = "full-stack-test-offer-id-1001";
 
         final ResponseEntity<Offer> response = restTemplate.exchange(
