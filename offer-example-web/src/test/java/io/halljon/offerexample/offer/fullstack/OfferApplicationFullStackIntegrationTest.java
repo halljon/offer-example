@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -16,6 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.Map;
 
 import static io.halljon.offerexample.offer.common.OfferConst.OFFER_STATUS_CODE_ACTIVE;
@@ -64,7 +66,7 @@ public class OfferApplicationFullStackIntegrationTest {
         final HttpEntity<Offer> request = new HttpEntity<>(offer);
 
         final ResponseEntity<String> response = restTemplate.exchange(
-                getOfferEndpointBaseUrl(), POST, request, String.class,
+                createOfferUrlWithMerchantIdentifier(), POST, request, String.class,
                 MERCHANT_IDENTIFIER);
 
         assertThat(response.getStatusCode(), equalTo(OK));
@@ -88,7 +90,7 @@ public class OfferApplicationFullStackIntegrationTest {
     @Test
     public void findActiveOfferWhenItExists() {
         final ResponseEntity<Offer> response = restTemplate.exchange(
-                getOfferEndpointBaseUrl() + "/{offerIdentifier}",
+                createOfferUrlWithMerchantAndOfferIdentifier(),
                 GET, null, Offer.class,
                 MERCHANT_IDENTIFIER, OFFER_IDENTIFIER);
 
@@ -111,7 +113,7 @@ public class OfferApplicationFullStackIntegrationTest {
     @Test
     public void cancelOfferWhenItExist() {
         final ResponseEntity<Offer> response = restTemplate.exchange(
-                getOfferEndpointBaseUrl() + "/{offerIdentifier}",
+                createOfferUrlWithMerchantAndOfferIdentifier(),
                 DELETE, null, Offer.class,
                 MERCHANT_IDENTIFIER, OFFER_IDENTIFIER);
 
@@ -122,7 +124,27 @@ public class OfferApplicationFullStackIntegrationTest {
         assertThat(statusCode, equalTo(OFFER_STATUS_CODE_CANCELLED));
     }
 
-    private String getOfferEndpointBaseUrl() {
+    @Test
+    public void findActiveOffers() {
+        final ResponseEntity<Collection<Offer>> response = restTemplate.exchange(
+                createOfferUrlWithMerchantIdentifier(),
+                GET, null, new ParameterizedTypeReference<Collection<Offer>>() {
+                },
+                MERCHANT_IDENTIFIER);
+
+        assertThat(response.getStatusCode(), equalTo(OK));
+        assertThat(response.getBody(), notNullValue());
+
+        final Collection<Offer> offers = response.getBody();
+
+        assertThat(offers.size(), equalTo(2));
+    }
+
+    private String createOfferUrlWithMerchantIdentifier() {
         return "http://localhost:" + port + "/v1/offers/{merchantIdentifier}";
+    }
+
+    private String createOfferUrlWithMerchantAndOfferIdentifier() {
+        return "http://localhost:" + port + "/v1/offers/{merchantIdentifier}/{offerIdentifier}";
     }
 }
