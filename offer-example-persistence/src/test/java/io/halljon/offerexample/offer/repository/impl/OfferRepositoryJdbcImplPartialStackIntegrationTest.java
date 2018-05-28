@@ -34,14 +34,12 @@ import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcI
 import static java.util.Collections.singletonMap;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {OfferPersistenceConfiguration.class})
 @EnableAutoConfiguration
 @Rollback
 @Transactional
-@Sql(scripts = "classpath:sql/repository-test-preparation.sql", executionPhase = BEFORE_TEST_METHOD)
 public class OfferRepositoryJdbcImplPartialStackIntegrationTest {
     private static final String MERCHANT_IDENTIFIER_1 = "repository-test-merchant-id-1";
     private static final Timestamp SPECIFIED_DATE_TIME = Timestamp.valueOf("2018-01-15 12:13:14");
@@ -81,6 +79,7 @@ public class OfferRepositoryJdbcImplPartialStackIntegrationTest {
         offerRepository.saveNewOffer(offer);
     }
 
+    @Sql(scripts = "classpath:sql/test-find-active-offer.sql")
     @Test
     public void findActiveOfferWhenExists() {
         final String offerIdentifier = "repository-test-offer-id-1004";
@@ -103,18 +102,20 @@ public class OfferRepositoryJdbcImplPartialStackIntegrationTest {
         assertThat(offer.getStatusCode(), equalTo(OFFER_STATUS_CODE_ACTIVE));
     }
 
+    @Sql(scripts = "classpath:sql/test-find-active-offer-when-not-active.sql")
     @Test
     public void findActiveOfferWhenNotActive() {
         final Optional<Offer> optional =
-                offerRepository.findActiveOffer(MERCHANT_IDENTIFIER_1, "offer-id-1001", SPECIFIED_DATE_TIME);
+                offerRepository.findActiveOffer(MERCHANT_IDENTIFIER_1, "repository-test-offer-id-1001", SPECIFIED_DATE_TIME);
 
         assertThat(optional.isPresent(), equalTo(false));
     }
 
+    @Sql(scripts = "classpath:sql/test-find-active-offer-when-not-in-active-date-range.sql")
     @Test
     public void findActiveOfferWhenNotInActiveDateRange() {
         final Optional<Offer> optional =
-                offerRepository.findActiveOffer(MERCHANT_IDENTIFIER_1, "offer-id-1002", SPECIFIED_DATE_TIME);
+                offerRepository.findActiveOffer(MERCHANT_IDENTIFIER_1, "repository-test-offer-id-1002", SPECIFIED_DATE_TIME);
 
         assertThat(optional.isPresent(), equalTo(false));
     }
