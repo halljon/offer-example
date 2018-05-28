@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static io.halljon.offerexample.offer.common.OfferConst.OFFER_STATUS_CODE_ACTIVE;
+import static io.halljon.offerexample.offer.common.OfferConst.OFFER_STATUS_CODE_CANCELLED;
 import static io.halljon.offerexample.offer.domain.OfferTestUtils.createPopulatedOfferWithKnownValues;
 import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_ACTIVE_END_DATE_COLUMN;
 import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_ACTIVE_START_DATE_COLUMN;
@@ -118,5 +119,31 @@ public class OfferRepositoryJdbcImplPartialStackIntegrationTest {
                 offerRepository.findActiveOffer(MERCHANT_IDENTIFIER_1, "repository-test-offer-id-1002", SPECIFIED_DATE_TIME);
 
         assertThat(optional.isPresent(), equalTo(false));
+    }
+
+    @Sql(scripts = "classpath:sql/test-cancel-offer.sql")
+    @Test
+    public void cancelOfferWhenExists() {
+        final String offerIdentifier = "repository-test-offer-id-1008";
+
+        final boolean cancelled = offerRepository.cancelOffer(MERCHANT_IDENTIFIER_1, offerIdentifier);
+
+        assertThat(cancelled, equalTo(true));
+
+        final String statusCode = namedParameterJdbcTemplate.queryForObject(
+                "SELECT status_code FROM offer WHERE offer_id = :offer_id",
+                singletonMap(OFFER_OFFER_ID_COLUMN, offerIdentifier), String.class);
+
+        assertThat(statusCode, equalTo(OFFER_STATUS_CODE_CANCELLED));
+    }
+
+    @Test
+    public void cancelOfferWhenDoesNotExist() {
+        final String offerIdentifier = "repository-test-offer-id-9999";
+
+        final boolean cancelled = offerRepository.cancelOffer(MERCHANT_IDENTIFIER_1, offerIdentifier);
+
+        assertThat(cancelled, equalTo(false));
+
     }
 }

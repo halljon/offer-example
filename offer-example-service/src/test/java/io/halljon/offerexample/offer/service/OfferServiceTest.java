@@ -41,13 +41,13 @@ public class OfferServiceTest {
     private IdentifierGenerator mockGenerator;
 
     @Mock
-    private DateService mockDateService;
+    private DateTimeService mockDateTimeService;
 
     private OfferService offerService;
 
     @Before
     public void beforeEachTest() {
-        offerService = new OfferServiceImpl(mockOfferRepository, mockGenerator, mockDateService);
+        offerService = new OfferServiceImpl(mockOfferRepository, mockGenerator, mockDateTimeService);
     }
 
     @After
@@ -55,7 +55,7 @@ public class OfferServiceTest {
         verifyNoMoreInteractions(
                 mockOfferRepository,
                 mockGenerator,
-                mockDateService
+                mockDateTimeService
         );
     }
 
@@ -115,7 +115,7 @@ public class OfferServiceTest {
         final Timestamp timestamp = Timestamp.valueOf(dateTime);
         final Offer offer = new Offer();
 
-        when(mockDateService
+        when(mockDateTimeService
                 .getCurrentDateTime()
         ).thenReturn(
                 dateTime
@@ -132,7 +132,7 @@ public class OfferServiceTest {
         assertThat(optional.isPresent(), equalTo(true));
         assertThat(optional.get(), equalTo(offer));
 
-        verify(mockDateService)
+        verify(mockDateTimeService)
                 .getCurrentDateTime();
 
         verify(mockOfferRepository)
@@ -144,7 +144,7 @@ public class OfferServiceTest {
         final LocalDateTime dateTime = LocalDateTime.now(DEFAULT_ZONE_ID);
         final Timestamp timestamp = Timestamp.valueOf(dateTime);
 
-        when(mockDateService
+        when(mockDateTimeService
                 .getCurrentDateTime()
         ).thenReturn(
                 dateTime
@@ -160,7 +160,7 @@ public class OfferServiceTest {
 
         assertThat(optional.isPresent(), equalTo(false));
 
-        verify(mockDateService)
+        verify(mockDateTimeService)
                 .getCurrentDateTime();
 
         verify(mockOfferRepository)

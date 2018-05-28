@@ -1,13 +1,13 @@
 package io.halljon.offerexample.offer.service.impl;
 
-import io.halljon.offerexample.offer.service.DateService;
+import io.halljon.offerexample.offer.service.DateTimeService;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 @Component
-public class DateServiceImpl implements DateService {
+public class DateTimeServiceImpl implements DateTimeService {
     private static final ZoneId DEFAULT_ZONE_ID = ZoneId.of("UTC");
 
     @Override

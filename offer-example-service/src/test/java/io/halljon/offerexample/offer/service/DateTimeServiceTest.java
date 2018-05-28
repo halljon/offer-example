@@ -1,6 +1,6 @@
 package io.halljon.offerexample.offer.service;
 
-import io.halljon.offerexample.offer.service.impl.DateServiceImpl;
+import io.halljon.offerexample.offer.service.impl.DateTimeServiceImpl;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
@@ -8,12 +8,12 @@ import java.time.LocalDateTime;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
-public class DateServiceTest {
-    private final DateService dateService = new DateServiceImpl();
+public class DateTimeServiceTest {
+    private final DateTimeService dateTimeService = new DateTimeServiceImpl();
 
     @Test
     public void getCurrentDateTime() {
-        final LocalDateTime dateTime = dateService.getCurrentDateTime();
+        final LocalDateTime dateTime = dateTimeService.getCurrentDateTime();
 
         assertThat(dateTime, notNullValue());
     }

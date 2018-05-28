@@ -15,9 +15,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * //TODO: JH - externalise SQL
+ */
 @Repository
 public class OfferRepositoryJdbcImpl implements OfferRepository {
-    //TODO: JH - externalise SQL
     public static final String OFFER_OFFER_ID_COLUMN = "offer_id";
     public static final String OFFER_MERCHANT_ID_COLUMN = "merchant_id";
     public static final String OFFER_DESCRIPTION_COLUMN = "description";
@@ -27,6 +29,8 @@ public class OfferRepositoryJdbcImpl implements OfferRepository {
     public static final String OFFER_ACTIVE_START_DATE_COLUMN = "active_start_date";
     public static final String OFFER_ACTIVE_END_DATE_COLUMN = "active_end_date";
     public static final String OFFER_STATUS_CODE_COLUMN = "status_code";
+
+    private static final String SPECIFIED_DATE = "specified_date";
 
     private static final String SAVE_NEW_OFFER_SQL =
             "INSERT INTO offer ("
@@ -49,6 +53,12 @@ public class OfferRepositoryJdbcImpl implements OfferRepository {
                     + "AND status_code = 'A' "
                     + "AND merchant_id = :merchant_id "
                     + "AND offer_id = :offer_id";
+
+    private static final String CANCEL_OFFER_SQL =
+            "UPDATE offer " +
+                    "SET status_code = 'C' " +
+                    "WHERE merchant_id = :merchant_id " +
+                    "AND offer_id = :offer_id";
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -73,10 +83,16 @@ public class OfferRepositoryJdbcImpl implements OfferRepository {
     }
 
     @Override
-    public void cancelOffer(final String merchantIdentifier,
-                            final String offerIdentifier) {
+    public boolean cancelOffer(final String merchantIdentifier,
+                               final String offerIdentifier) {
 
-        throw new UnsupportedOperationException();
+        final Map<String, Object> values = new HashMap<>();
+        values.put(OFFER_MERCHANT_ID_COLUMN, merchantIdentifier);
+        values.put(OFFER_OFFER_ID_COLUMN, offerIdentifier);
+
+        final int rowsUpdated = namedParameterJdbcTemplate.update(CANCEL_OFFER_SQL, values);
+
+        return rowsUpdated == 1;
     }
 
     @Override
@@ -99,7 +115,7 @@ public class OfferRepositoryJdbcImpl implements OfferRepository {
         final Map<String, Object> values = new HashMap<>();
         values.put(OFFER_MERCHANT_ID_COLUMN, merchantIdentifier);
         values.put(OFFER_OFFER_ID_COLUMN, offerIdentifier);
-        values.put("specified_date", dateTime);
+        values.put(SPECIFIED_DATE, dateTime);
 
         final Offer offer = DataAccessUtils.singleResult(
                 namedParameterJdbcTemplate.query(FIND_ACTIVE_OFFER_SQL, values, new OfferRowMapper()));
