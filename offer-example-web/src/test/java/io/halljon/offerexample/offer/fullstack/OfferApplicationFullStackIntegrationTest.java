@@ -64,7 +64,7 @@ public class OfferApplicationFullStackIntegrationTest {
         final HttpEntity<Offer> request = new HttpEntity<>(offer);
 
         final ResponseEntity<String> response = restTemplate.exchange(
-                "http://localhost:" + port + "/v1/offers/{merchantIdentifier}", POST, request, String.class,
+                getOfferEndpointUrl(), POST, request, String.class,
                 MERCHANT_IDENTIFIER);
 
         assertThat(response.getStatusCode(), equalTo(OK));
@@ -88,7 +88,7 @@ public class OfferApplicationFullStackIntegrationTest {
     @Test
     public void findActiveOfferWhenItExists() {
         final ResponseEntity<Offer> response = restTemplate.exchange(
-                "http://localhost:" + port + "/v1/offers/{merchantIdentifier}/{offerIdentifier}",
+                getOfferEndpointUrl() + "/{offerIdentifier}",
                 GET, null, Offer.class,
                 MERCHANT_IDENTIFIER, OFFER_IDENTIFIER);
 
@@ -99,7 +99,7 @@ public class OfferApplicationFullStackIntegrationTest {
 
         assertThat(offer.getOfferIdentifier(), equalTo(OFFER_IDENTIFIER));
         assertThat(offer.getMerchantIdentifier(), equalTo(MERCHANT_IDENTIFIER));
-        assertThat(offer.getDescription(), equalTo("Some really interesting offer 1004"));
+        assertThat(offer.getDescription(), equalTo("Some really interesting offer 1001"));
         assertThat(offer.getOfferingIdentifier(), equalTo("offering-id-1"));
         assertThat(offer.getPrice(), equalTo(new BigDecimal("12.34")));
         assertThat(offer.getCurrencyCode(), equalTo("GBP"));
@@ -111,7 +111,7 @@ public class OfferApplicationFullStackIntegrationTest {
     @Test
     public void cancelOfferWhenItExist() {
         final ResponseEntity<Offer> response = restTemplate.exchange(
-                "http://localhost:" + port + "/v1/offers/{merchantIdentifier}/{offerIdentifier}",
+                getOfferEndpointUrl() + "/{offerIdentifier}",
                 DELETE, null, Offer.class,
                 MERCHANT_IDENTIFIER, OFFER_IDENTIFIER);
 
@@ -120,5 +120,9 @@ public class OfferApplicationFullStackIntegrationTest {
         final String statusCode = findOfferStatusCode(namedParameterJdbcTemplate, OFFER_IDENTIFIER);
 
         assertThat(statusCode, equalTo(OFFER_STATUS_CODE_CANCELLED));
+    }
+
+    private String getOfferEndpointUrl() {
+        return "http://localhost:" + port + "/v1/offers/{merchantIdentifier}";
     }
 }

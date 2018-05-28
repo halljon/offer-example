@@ -15,8 +15,6 @@ public interface OfferRepository {
     Collection<Offer> findActiveOffers(String merchantIdentifier,
                                        Timestamp dateTime);
 
-    Collection<Offer> findAllOffers(String merchantIdentifier);
-
     Optional<Offer> findActiveOffer(String merchantIdentifier,
                                     String offerIdentifier,
                                     Timestamp dateTime);
