@@ -17,6 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
@@ -93,7 +94,7 @@ public class OfferRepositoryJdbcImplPartialStackIntegrationTest {
 
         assertThat(offer.getOfferIdentifier(), equalTo(offerIdentifier));
         assertThat(offer.getMerchantIdentifier(), equalTo(MERCHANT_IDENTIFIER_1));
-        assertThat(offer.getDescription(), equalTo("Some really interesting offer 1004"));
+        assertThat(offer.getDescription(), equalTo("Interesting offer 1004"));
         assertThat(offer.getOfferingIdentifier(), equalTo("offering-id-1"));
         assertThat(offer.getPrice(), equalTo(new BigDecimal("12.34")));
         assertThat(offer.getCurrencyCode(), equalTo("GBP"));
@@ -141,6 +142,21 @@ public class OfferRepositoryJdbcImplPartialStackIntegrationTest {
         final boolean cancelled = offerRepository.cancelOffer(MERCHANT_IDENTIFIER_1, offerIdentifier);
 
         assertThat(cancelled, equalTo(false));
+    }
 
+    @Sql(scripts = "classpath:sql/test-find-active-offers-when-they-exist.sql")
+    @Test
+    public void findActiveOffersWhenTheyExist() {
+        final Collection<Offer> offers = offerRepository.findActiveOffers(MERCHANT_IDENTIFIER_1, SPECIFIED_DATE_TIME);
+
+        assertThat(offers.size(), equalTo(3));
+    }
+
+    @Sql(scripts = "classpath:sql/test-find-active-offers-when-they-do-not-exist.sql")
+    @Test
+    public void findActiveOffersWhenTheyDoNotExist() {
+        final Collection<Offer> offers = offerRepository.findActiveOffers(MERCHANT_IDENTIFIER_1, SPECIFIED_DATE_TIME);
+
+        assertThat(offers.size(), equalTo(0));
     }
 }

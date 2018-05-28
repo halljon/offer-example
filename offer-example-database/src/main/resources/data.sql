@@ -17,7 +17,7 @@ INSERT INTO offer (
   active_start_date, active_end_date,
   status_code
 ) VALUES (
-  'offer-id-1', 'merchant-id-1', 'Some really interesting offer',
+  'offer-id-1', 'merchant-id-1', 'Interesting offer description',
   'offering-id-1', 12.34, 'GBP',
   '2018-01-01', '2018-01-31 23:59:59',
   'A'

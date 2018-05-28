@@ -60,6 +60,14 @@ public class OfferRepositoryJdbcImpl implements OfferRepository {
                     "WHERE merchant_id = :merchant_id " +
                     "AND offer_id = :offer_id";
 
+    private static final String FIND_ACTIVE_OFFERS_SQL =
+            "SELECT * "
+                    + "FROM offer "
+                    + "WHERE :specified_date >= active_start_date "
+                    + "AND :specified_date <= active_end_date "
+                    + "AND status_code = 'A' "
+                    + "AND merchant_id = :merchant_id ";
+
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     public OfferRepositoryJdbcImpl(final NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
@@ -99,12 +107,11 @@ public class OfferRepositoryJdbcImpl implements OfferRepository {
     public Collection<Offer> findActiveOffers(final String merchantIdentifier,
                                               final Timestamp dateTime) {
 
-        throw new UnsupportedOperationException();
-    }
+        final Map<String, Object> values = new HashMap<>();
+        values.put(OFFER_MERCHANT_ID_COLUMN, merchantIdentifier);
+        values.put(SPECIFIED_DATE, dateTime);
 
-    @Override
-    public Collection<Offer> findAllOffers(final String merchantIdentifier) {
-        throw new UnsupportedOperationException();
+        return namedParameterJdbcTemplate.query(FIND_ACTIVE_OFFERS_SQL, values, new OfferRowMapper());
     }
 
     @Override

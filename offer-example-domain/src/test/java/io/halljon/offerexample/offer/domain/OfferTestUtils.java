@@ -43,9 +43,9 @@ public final class OfferTestUtils {
         return offer;
     }
 
-    public static String toJson(final Offer offer)
+    public static String toJson(final Object object)
             throws JsonProcessingException {
 
-        return OBJECT_MAPPER.writeValueAsString(offer);
+        return OBJECT_MAPPER.writeValueAsString(object);
     }
 }

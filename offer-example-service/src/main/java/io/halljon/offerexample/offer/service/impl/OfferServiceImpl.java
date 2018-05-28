@@ -61,7 +61,13 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public Collection<Offer> findActiveOffers(final String merchantIdentifier) {
-        throw new UnsupportedOperationException();
+        final LocalDateTime dateTime = dateTimeService.getCurrentDateTime();
+        final Timestamp timestamp = Timestamp.valueOf(dateTime);
+
+        LOGGER.debug("About to find active offers for merchant: '{}' using current time: '{}'",
+                merchantIdentifier, dateTime);
+
+        return offerRepository.findActiveOffers(merchantIdentifier, timestamp);
     }
 
     @Override
