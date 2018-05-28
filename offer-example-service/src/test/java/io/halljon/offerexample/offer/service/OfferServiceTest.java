@@ -12,9 +12,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Optional;
 
 import static io.halljon.offerexample.offer.common.OfferConst.DEFAULT_ZONE_ID;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -31,6 +33,8 @@ public class OfferServiceTest {
     private static final String SPECIFIC_EXCEPTION_WAS_EXPECTED_BUT_DID_NOT_OCCUR =
             "A specific exception was expected, but did not occur";
 
+    private final LocalDateTime dateTime = LocalDateTime.now(DEFAULT_ZONE_ID);
+    private final Timestamp timestamp = Timestamp.valueOf(dateTime);
     private final Offer offer = new Offer();
 
     @Mock
@@ -110,10 +114,6 @@ public class OfferServiceTest {
 
     @Test
     public void findActiveOfferWhenItExists() {
-        final LocalDateTime dateTime = LocalDateTime.now(DEFAULT_ZONE_ID);
-        final Timestamp timestamp = Timestamp.valueOf(dateTime);
-        final Offer offer = new Offer();
-
         when(mockDateTimeService
                 .getCurrentDateTime()
         ).thenReturn(
@@ -140,9 +140,6 @@ public class OfferServiceTest {
 
     @Test
     public void findActiveOfferWhenItDoesNotExist() {
-        final LocalDateTime dateTime = LocalDateTime.now(DEFAULT_ZONE_ID);
-        final Timestamp timestamp = Timestamp.valueOf(dateTime);
-
         when(mockDateTimeService
                 .getCurrentDateTime()
         ).thenReturn(
@@ -182,5 +179,30 @@ public class OfferServiceTest {
 
         verify(mockOfferRepository)
                 .cancelOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER);
+    }
+
+    @Test
+    public void findActiveOffers() {
+        when(mockDateTimeService
+                .getCurrentDateTime()
+        ).thenReturn(
+                dateTime
+        );
+
+        when(mockOfferRepository
+                .findActiveOffers(MERCHANT_IDENTIFIER, timestamp)
+        ).thenReturn(
+                singletonList(offer)
+        );
+
+        final Collection<Offer> offers = offerService.findActiveOffers(MERCHANT_IDENTIFIER);
+
+        assertThat(offers.size(), equalTo(1));
+
+        verify(mockDateTimeService)
+                .getCurrentDateTime();
+
+        verify(mockOfferRepository)
+                .findActiveOffers(MERCHANT_IDENTIFIER, timestamp);
     }
 }
