@@ -17,6 +17,8 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.nio.charset.Charset;
 
+import static io.halljon.offerexample.offer.controller.OfferControllerTestUtils.createOfferUrlTemplateWithMerchantAndOfferIdentifiers;
+import static io.halljon.offerexample.offer.controller.OfferControllerTestUtils.createOfferUrlTemplateWithMerchantIdentifier;
 import static io.halljon.offerexample.offer.domain.OfferTestUtils.createPopulatedOfferWithKnownValues;
 import static io.halljon.offerexample.offer.domain.OfferTestUtils.toJson;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -67,14 +69,14 @@ public class MerchantOfferControllerTest {
                 OFFER_IDENTIFIER
         );
 
-        final MvcResult mvcResult = mockMvc.perform(
-                post("/v1/offers/{merchantIdentifier}", MERCHANT_IDENTIFIER)
+        final MvcResult result = mockMvc.perform(
+                post(createOfferUrlTemplateWithMerchantIdentifier(), MERCHANT_IDENTIFIER)
                         .contentType(CONTENT_TYPE)
-                        .content(toJson(offer)))
-                .andReturn();
+                        .content(toJson(offer))
+        ).andReturn();
 
-        assertThat(mvcResult.getResponse().getStatus(), equalTo(OK.value()));
-        assertThat(mvcResult.getResponse().getContentAsString(), equalTo(OFFER_IDENTIFIER));
+        assertThat(result.getResponse().getStatus(), equalTo(OK.value()));
+        assertThat(result.getResponse().getContentAsString(), equalTo(OFFER_IDENTIFIER));
 
         verify(mockOfferService)
                 .createNewOffer(eq(MERCHANT_IDENTIFIER), captorOffer.capture());
@@ -98,11 +100,11 @@ public class MerchantOfferControllerTest {
                 true
         );
 
-        final MvcResult mvcResult = mockMvc.perform(
-                delete("/v1/offers/{merchantIdentifier}/{offerIdentifier}", MERCHANT_IDENTIFIER, OFFER_IDENTIFIER))
-                .andReturn();
+        final MvcResult result = mockMvc.perform(
+                delete(createOfferUrlTemplateWithMerchantAndOfferIdentifiers(), MERCHANT_IDENTIFIER, OFFER_IDENTIFIER)
+        ).andReturn();
 
-        assertThat(mvcResult.getResponse().getStatus(), equalTo(OK.value()));
+        assertThat(result.getResponse().getStatus(), equalTo(OK.value()));
         verify(mockOfferService)
                 .cancelOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER);
     }
@@ -117,11 +119,11 @@ public class MerchantOfferControllerTest {
                 false
         );
 
-        final MvcResult mvcResult = mockMvc.perform(
-                delete("/v1/offers/{merchantIdentifier}/{offerIdentifier}", MERCHANT_IDENTIFIER, OFFER_IDENTIFIER))
-                .andReturn();
+        final MvcResult result = mockMvc.perform(
+                delete(createOfferUrlTemplateWithMerchantAndOfferIdentifiers(), MERCHANT_IDENTIFIER, OFFER_IDENTIFIER)
+        ).andReturn();
 
-        assertThat(mvcResult.getResponse().getStatus(), equalTo(NOT_FOUND.value()));
+        assertThat(result.getResponse().getStatus(), equalTo(NOT_FOUND.value()));
 
         verify(mockOfferService)
                 .cancelOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER);

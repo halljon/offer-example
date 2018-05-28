@@ -23,12 +23,11 @@ public class CustomerOfferController {
         this.offerService = offerService;
     }
 
-    public Collection<Offer> findAllActiveOffers(final String merchantIdentifier) {
-        if (true) {
-            throw new UnsupportedOperationException();
-        }
+    @GetMapping(value = "/{merchantIdentifier}")
+    public ResponseEntity<Collection<Offer>> findActiveOffers(@PathVariable final String merchantIdentifier) {
+        final Collection<Offer> offers = offerService.findActiveOffers(merchantIdentifier);
 
-        return offerService.findActiveOffers(merchantIdentifier);
+        return new ResponseEntity<>(offers, OK);
     }
 
     @GetMapping(value = "/{merchantIdentifier}/{offerIdentifier}")

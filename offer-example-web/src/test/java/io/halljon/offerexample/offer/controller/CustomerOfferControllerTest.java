@@ -12,10 +12,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.util.Collection;
 import java.util.Optional;
 
-import static io.halljon.offerexample.offer.domain.OfferTestUtils.createPopulatedOfferWithKnownValues;
+import static io.halljon.offerexample.offer.controller.OfferControllerTestUtils.createOfferUrlTemplateWithMerchantAndOfferIdentifiers;
+import static io.halljon.offerexample.offer.controller.OfferControllerTestUtils.createOfferUrlTemplateWithMerchantIdentifier;
 import static io.halljon.offerexample.offer.domain.OfferTestUtils.toJson;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
@@ -37,6 +40,8 @@ public class CustomerOfferControllerTest {
     @MockBean
     private OfferService mockOfferService;
 
+    private final Offer offer = new Offer();
+
     @After
     public void afterEachTest() {
         verifyNoMoreInteractions(mockOfferService);
@@ -46,20 +51,18 @@ public class CustomerOfferControllerTest {
     public void findActiveOfferWhenItExists()
             throws Exception {
 
-        final Offer offer = createPopulatedOfferWithKnownValues();
-
         when(mockOfferService
                 .findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER)
         ).thenReturn(
                 Optional.of(offer)
         );
 
-        final MvcResult mvcResult = mockMvc.perform(
-                get("/v1/offers/{merchantIdentifier}/{offerIdentifier}", MERCHANT_IDENTIFIER, OFFER_IDENTIFIER))
-                .andReturn();
+        final MvcResult result = mockMvc.perform(
+                get(createOfferUrlTemplateWithMerchantAndOfferIdentifiers(), MERCHANT_IDENTIFIER, OFFER_IDENTIFIER)
+        ).andReturn();
 
-        assertThat(mvcResult.getResponse().getStatus(), equalTo(OK.value()));
-        assertThat(mvcResult.getResponse().getContentAsString(), equalTo(toJson(offer)));
+        assertThat(result.getResponse().getStatus(), equalTo(OK.value()));
+        assertThat(result.getResponse().getContentAsString(), equalTo(toJson(offer)));
 
         verify(mockOfferService)
                 .findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER);
@@ -75,13 +78,36 @@ public class CustomerOfferControllerTest {
                 Optional.empty()
         );
 
-        final MvcResult mvcResult = mockMvc.perform(
-                get("/v1/offers/{merchantIdentifier}/{offerIdentifier}", MERCHANT_IDENTIFIER, OFFER_IDENTIFIER))
-                .andReturn();
+        final MvcResult result = mockMvc.perform(
+                get(createOfferUrlTemplateWithMerchantAndOfferIdentifiers(), MERCHANT_IDENTIFIER, OFFER_IDENTIFIER)
+        ).andReturn();
 
-        assertThat(mvcResult.getResponse().getStatus(), equalTo(NOT_FOUND.value()));
+        assertThat(result.getResponse().getStatus(), equalTo(NOT_FOUND.value()));
 
         verify(mockOfferService)
                 .findActiveOffer(MERCHANT_IDENTIFIER, OFFER_IDENTIFIER);
+    }
+
+    @Test
+    public void findActiveOffers()
+            throws Exception {
+
+        final Collection<Offer> offers = singletonList(offer);
+
+        when(mockOfferService
+                .findActiveOffers(MERCHANT_IDENTIFIER)
+        ).thenReturn(
+                offers
+        );
+
+        final MvcResult result = mockMvc.perform(
+                get(createOfferUrlTemplateWithMerchantIdentifier(), MERCHANT_IDENTIFIER)
+        ).andReturn();
+
+        assertThat(result.getResponse().getStatus(), equalTo(OK.value()));
+        assertThat(result.getResponse().getContentAsString(), equalTo(toJson(offers)));
+
+        verify(mockOfferService)
+                .findActiveOffers(MERCHANT_IDENTIFIER);
     }
 }
