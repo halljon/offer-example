@@ -53,7 +53,7 @@ public class OfferServiceImpl implements OfferService {
     public boolean cancelOffer(final String merchantIdentifier,
                                final String offerIdentifier) {
 
-        LOGGER.debug("About to cancel offer for merchant: '{}', offer identifier: '{}'",
+        LOGGER.debug("About to cancel offer for merchant: '{}', with offer identifier: '{}'",
                 merchantIdentifier, offerIdentifier);
 
         return offerRepository.cancelOffer(merchantIdentifier, offerIdentifier);
@@ -71,7 +71,7 @@ public class OfferServiceImpl implements OfferService {
         final LocalDateTime dateTime = dateTimeService.getCurrentDateTime();
         final Timestamp timestamp = Timestamp.valueOf(dateTime);
 
-        LOGGER.debug("About to find active offer for merchant: '{}', offer identifier: '{}' using current time: '{}'",
+        LOGGER.debug("About to find active offer for merchant: '{}', with offer identifier: '{}' using current time: '{}'",
                 merchantIdentifier, offerIdentifier, dateTime);
 
         return offerRepository.findActiveOffer(merchantIdentifier, offerIdentifier, timestamp);

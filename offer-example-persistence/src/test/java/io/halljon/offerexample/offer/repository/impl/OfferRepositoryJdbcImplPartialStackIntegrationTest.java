@@ -23,6 +23,8 @@ import java.util.Optional;
 import static io.halljon.offerexample.offer.common.OfferConst.OFFER_STATUS_CODE_ACTIVE;
 import static io.halljon.offerexample.offer.common.OfferConst.OFFER_STATUS_CODE_CANCELLED;
 import static io.halljon.offerexample.offer.domain.OfferTestUtils.createPopulatedOfferWithKnownValues;
+import static io.halljon.offerexample.offer.repository.impl.OfferJdbcTestUtils.findOfferStatusCode;
+import static io.halljon.offerexample.offer.repository.impl.OfferJdbcTestUtils.findOfferValues;
 import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_ACTIVE_END_DATE_COLUMN;
 import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_ACTIVE_START_DATE_COLUMN;
 import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_CURRENCY_CODE_COLUMN;
@@ -32,7 +34,6 @@ import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcI
 import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_OFFER_ID_COLUMN;
 import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_PRICE_COLUMN;
 import static io.halljon.offerexample.offer.repository.impl.OfferRepositoryJdbcImpl.OFFER_STATUS_CODE_COLUMN;
-import static java.util.Collections.singletonMap;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -57,9 +58,7 @@ public class OfferRepositoryJdbcImplPartialStackIntegrationTest {
 
         offerRepository.saveNewOffer(offer);
 
-        final Map<String, Object> values = namedParameterJdbcTemplate.queryForMap(
-                "SELECT * FROM OFFER WHERE offer_id = :offer_id",
-                singletonMap(OFFER_OFFER_ID_COLUMN, offer.getOfferIdentifier()));
+        final Map<String, Object> values = findOfferValues(namedParameterJdbcTemplate, offer.getOfferIdentifier());
 
         assertThat(values.get(OFFER_OFFER_ID_COLUMN), equalTo(offer.getOfferIdentifier()));
         assertThat(values.get(OFFER_MERCHANT_ID_COLUMN), equalTo(offer.getMerchantIdentifier()));
@@ -130,9 +129,7 @@ public class OfferRepositoryJdbcImplPartialStackIntegrationTest {
 
         assertThat(cancelled, equalTo(true));
 
-        final String statusCode = namedParameterJdbcTemplate.queryForObject(
-                "SELECT status_code FROM offer WHERE offer_id = :offer_id",
-                singletonMap(OFFER_OFFER_ID_COLUMN, offerIdentifier), String.class);
+        final String statusCode = findOfferStatusCode(namedParameterJdbcTemplate, offerIdentifier);
 
         assertThat(statusCode, equalTo(OFFER_STATUS_CODE_CANCELLED));
     }
