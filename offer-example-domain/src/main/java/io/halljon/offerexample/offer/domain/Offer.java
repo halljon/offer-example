@@ -2,21 +2,51 @@ package io.halljon.offerexample.offer.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
+@Entity
 public class Offer {
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
 
     //TODO: JH - start and end date from timestamp to local date time and consider status code as enum
+
+    @Id
+    @Column(name = "offer_id")
     private String offerIdentifier;
+
+    @Column(name = "merchant_id")
+    @NotNull
     private String merchantIdentifier;
+
+    @NotNull
     private String description;
+
+    @Column(name = "offering_id")
+    @NotNull
     private String offeringIdentifier;
+
+    @NotNull
     private BigDecimal price;
+
+    @Column(name = "currency_code")
+    @NotNull
     private String currencyCode;
+
+    @Column(name = "active_start_date")
+    @NotNull
     private Timestamp activeStartDate;
+
+    @Column(name = "active_end_date")
+    @NotNull
     private Timestamp activeEndDate;
+
+    @Column(name = "status_code")
+    @NotNull
     private String statusCode;
 
     public String getOfferIdentifier() {

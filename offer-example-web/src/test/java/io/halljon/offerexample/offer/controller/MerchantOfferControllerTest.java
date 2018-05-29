@@ -28,6 +28,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -88,6 +89,21 @@ public class MerchantOfferControllerTest {
         assertThat(captorOffer.getValue().getActiveStartDate(), equalTo(offer.getActiveStartDate()));
         assertThat(captorOffer.getValue().getActiveEndDate(), equalTo(offer.getActiveEndDate()));
         assertThat(captorOffer.getValue().getStatusCode(), equalTo(offer.getStatusCode()));
+    }
+
+    @Test
+    public void createNewOfferWhenValuesMissing()
+            throws Exception {
+
+        final Offer offer = new Offer();
+
+        final MvcResult result = mockMvc.perform(
+                post(createOfferUrlTemplateWithMerchantIdentifier(), MERCHANT_IDENTIFIER)
+                        .contentType(CONTENT_TYPE)
+                        .content(toJson(offer))
+        ).andReturn();
+
+        assertThat(result.getResponse().getStatus(), equalTo(BAD_REQUEST.value()));
     }
 
     @Test

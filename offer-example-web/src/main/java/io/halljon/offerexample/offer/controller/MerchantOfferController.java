@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -24,7 +26,7 @@ public class MerchantOfferController {
 
     @PostMapping(value = "/{merchantIdentifier}")
     public String saveNewOffer(@PathVariable("merchantIdentifier") final String merchantIdentifier,
-                               @RequestBody final Offer offer) {
+                               @Valid @RequestBody final Offer offer) {
 
         return offerService.createNewOffer(merchantIdentifier, offer);
     }
