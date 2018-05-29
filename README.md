@@ -36,7 +36,7 @@ The project could have been split into other module structures, namely something
 * Single module - i.e. like Spring Boot starter.
 
 
-## Use cases
+# Use cases
 ![Alt text](https://g.gravizo.com/source/svg?https://raw.githubusercontent.com/halljon/offer-example/master/docs/use-case-overview.plantuml)
 Note: the below is the REST API exposed, see Things to do - better documentation to be created).
 
