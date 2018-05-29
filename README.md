@@ -42,9 +42,9 @@ The project could have been split into other module structures, namely something
 
 
 # Things to do 
-* [Exception handling configured for controllers to give a 500 whenever anything goes wrong](.issues/30) 
+* [Exception handling configured for controllers to give a 500 whenever anything goes wrong](https://github.com/halljon/offer-example/issues/30) 
 * Change timestamp to local date time.
-* Document REST API.
+* [Document REST API](https://github.com/halljon/offer-example/issues/26)
 * At caching of currencies, so that currency code can be checked rather than simply saving in database and having foreign key constraint.
 * Tidy up application.properties, as currently in a few modules.
 * Look at the //TODO: comments
