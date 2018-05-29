@@ -33,7 +33,7 @@ The project could have been split into other module structures, namely something
 * Web
 
 ### Alternative module structure 2
-* Single module - i.e. like Spring Boot starter.  I prefer separate modules instead of an all-in-one.
+* Single module - i.e. like Spring Boot starter.
 
 
 ## Use cases
@@ -42,7 +42,7 @@ The project could have been split into other module structures, namely something
 
 
 # Things to do 
-* Exception handling configured for controllers to give a 500 whenever anything goes wrong.
+* [Exception handling configured for controllers to give a 500 whenever anything goes wrong](.issues/30) 
 * Change timestamp to local date time.
 * Document REST API.
 * At caching of currencies, so that currency code can be checked rather than simply saving in database and having foreign key constraint.
