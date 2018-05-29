@@ -19,7 +19,7 @@ Clone this repository and then run:
 This project has a number of modules, which albeit don't contain much code, but are there to show how a complex system could be split up:
 
 * Database - contains schema DDL and DML to populate tables with initial data.
-    * Database creation and data population performed by running standard Maven clean install.
+    * Database creation and data population performed by running standard Maven clean install, there is a simple Spring Boot application and this effectively bootstraps the database creation using some POC (Proof Of Concept) type features that Spring Boot has (schema.sql and data.sql).
 * Domain - domain object(s).
 * Persistence - Persistence layer for domain objects.
 * Service - Service layer interacting with persistence and controlling transactions.
@@ -45,10 +45,10 @@ The project could have been split into other module structures, namely something
 * [Exception handling configured for controllers to give a 500 whenever anything goes wrong](https://github.com/halljon/offer-example/issues/30) 
 * Change timestamp to local date time.
 * [Document REST API](https://github.com/halljon/offer-example/issues/26)
-* At caching of currencies, so that currency code can be checked rather than simply saving in database and having foreign key constraint.
+* Add caching of currencies, so that currency code can be quickly checked, rather than simply relying on the database foreign key constraint.
 * Tidy up application.properties, as currently in a few modules.
-* Look at the //TODO: comments
-* Auditing and accountability columns omitted.
+* Look at the //TODO: comments, add issues or remove.
+* Auditing and accountability columns omitted from schema.
 * Request correlation id.
 
 # Points to note
