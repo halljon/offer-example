@@ -90,6 +90,7 @@ Response body: active Offer
 * Application context slicing using Spring Boot's support.
 * DateTimeService created so more control over dates could be added - i.e. to control what date/time it is beyond simply getting current system time.
 * Please note: be careful with H2 local file locking - i.e. make sure it isn't locked by another process or a locking exception will be raised.
+* Offer identifier, merchant identifier and offering identifier (the link to a product/service) are strings to allow UUID values, helping bridge microservices, where unique identifiers might need to be embedded from one microservice to another based on the service's bound context.  For example, product/service and merchant might be separate microservices.
 
 # Assumptions
 Timezones have been ignored.
