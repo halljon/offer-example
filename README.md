@@ -20,10 +20,10 @@ This project has a number of modules, which albeit don't contain much code, but 
 
 * Database - contains schema DDL and DML to populate tables with initial data.
     * Database creation and data population performed by running standard Maven clean install.
-* Domain
-* Persistence
-* Service
-* Web
+* Domain - domain object(s).
+* Persistence - Persistence layer for domain objects.
+* Service - Service layer interacting with persistence and controlling transactions.
+* Web - REST controllers.
 
 ## Alternative module structures
 The project could have been split into other module structures, namely something like the below:
@@ -42,8 +42,10 @@ The project could have been split into other module structures, namely something
 
 
 # Things to do 
-* Exception handling at controller.
+* Exception handling configured for controllers to give a 500 whenever anything goes wrong.
 * Change timestamp to local date time.
+* Document REST API.
+* At caching of currencies, so that currency code can be checked rather than simply saving in database and having foreign key constraint.
 * Tidy up application.properties, as currently in a few modules.
 * Look at the //TODO: comments
 * Auditing and accountability columns omitted.
