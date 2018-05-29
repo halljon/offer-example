@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.com/halljon/offer-example.svg?branch=master)](https://travis-ci.com/halljon/offer-example)
 
 # offer-example
-An example project based around a 'offer' demonstrating Spring Boot and current best practices
+An example project based around a 'offer' demonstrating Spring Boot and current best practices.
 
 Technologies used:
 * Spring Boot
@@ -33,7 +33,7 @@ The project could have been split into other module structures, namely something
 * Web
 
 ### Alternative module structure 2
-* Single module
+* Single module - i.e. like Spring Boot starter.  I prefer separate modules instead of an all-in-one.
 
 
 ## Use cases
@@ -41,6 +41,19 @@ The project could have been split into other module structures, namely something
 ![Alt text](https://g.gravizo.com/source/svg?https://raw.githubusercontent.com/halljon/offer-example/master/docs/use-case-overview.plantuml)
 
 
+# Things to do 
+* Exception handling at controller.
+* Change timestamp to local date time.
+* Tidy up application.properties, as currently in a few modules.
+* Look at the //TODO: comments
+* Auditing and accountability columns omitted.
+* Request correlation id.
+
+# Points to note
+* Application context slicing by virtue of repository module.
+* Application context slicing using Spring Boot's support.
+* DateTimeService created so more control over dates could be added - i.e. to control what date/time it is beyond simply getting current system time.
+* Please note: be careful with H2 local file locking - i.e. make sure it isn't locked by another process or a locking exception will be raised.
+
 # Assumptions
 Timezones have been ignored.
-All dates are local date time.
