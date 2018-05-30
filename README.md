@@ -13,6 +13,17 @@ Clone this repository and then run:
 
 `mvn clean install`
 
+# How to run and expose REST API
+After building the project:
+
+`cd offer-example-web`
+
+then:
+
+`mvn spring-boot:run`
+
+This will start the Spring Boot fat JAR webapp.
+
 # Modules
 
 ## Module overview
@@ -38,7 +49,6 @@ The project could have been split into other module structures, namely something
 
 # Use cases
 ![Alt text](https://g.gravizo.com/source/svg?https://raw.githubusercontent.com/halljon/offer-example/master/docs/use-case-overview.plantuml)
-Note: the below is the REST API exposed, see Things to do - better documentation to be created).
 
 # Basic REST API
 Please note: this is basic API, see things to do where there is already a ticket raised to document properly)
