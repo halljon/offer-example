@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -25,10 +26,12 @@ public class MerchantOfferController {
     }
 
     @PostMapping(value = "/{merchantIdentifier}")
-    public String saveNewOffer(@PathVariable("merchantIdentifier") final String merchantIdentifier,
-                               @Valid @RequestBody final Offer offer) {
+    public ResponseEntity<String> createNewOffer(@PathVariable("merchantIdentifier") final String merchantIdentifier,
+                                                 @Valid @RequestBody final Offer offer) {
 
-        return offerService.createNewOffer(merchantIdentifier, offer);
+        final String offerIdentifier = offerService.createNewOffer(merchantIdentifier, offer);
+
+        return new ResponseEntity<>(offerIdentifier, CREATED);
     }
 
     @DeleteMapping(value = "/{merchantIdentifier}/{offerIdentifier}")
