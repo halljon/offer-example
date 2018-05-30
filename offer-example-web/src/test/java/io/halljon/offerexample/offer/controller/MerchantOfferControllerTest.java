@@ -29,6 +29,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -76,7 +77,7 @@ public class MerchantOfferControllerTest {
                         .content(toJson(offer))
         ).andReturn();
 
-        assertThat(result.getResponse().getStatus(), equalTo(OK.value()));
+        assertThat(result.getResponse().getStatus(), equalTo(CREATED.value()));
         assertThat(result.getResponse().getContentAsString(), equalTo(OFFER_IDENTIFIER));
 
         verify(mockOfferService)
