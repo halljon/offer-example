@@ -13,7 +13,9 @@ Clone this repository and then run:
 
 `mvn clean install`
 
-# Modules
+Please note: this project has been tested on Windows 10 and Linux (Ubuntu) using JDK 8.
+
+# Project modules
 
 ## Module overview
 This project has a number of modules, which albeit don't contain much code, but are there to show how a complex system could be split up:
