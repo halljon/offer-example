@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.com/halljon/offer-example.svg?branch=master)](https://travis-ci.com/halljon/offer-example)
 
 # offer-example
-An example project based around a 'offer' demonstrating Spring Boot and current best practices.
+An example project based around a 'offer' demonstrating Spring Boot and exposing a REST API.
 
 Technologies used:
 * Spring Boot
@@ -51,8 +51,12 @@ then:
 
 This will start the Spring Boot fat JAR webapp.
 
-# Basic REST API
-Please note: this is basic API, see things to do where there is already a ticket raised to document properly)
+# REST API 
+Please note: the documentation is basic and manually generated - see "Things To Do", such as improving the documentation.
+
+This API aimed at being 'Level 2' on the REST maturity model:
+https://martinfowler.com/articles/richardsonMaturityModel.html
+
 
 ## Create offer
 ```rest
