@@ -10,6 +10,7 @@ import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -25,11 +26,13 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -93,7 +96,28 @@ public class MerchantOfferControllerTest {
     }
 
     @Test
-    public void createNewOfferWhenValuesMissing()
+    public void createNewOfferWhenDataIntegrityException()
+            throws Exception {
+
+        final Offer offer = createPopulatedOfferWithKnownValues();
+
+        doThrow(DataIntegrityViolationException.class).when(mockOfferService)
+                .createNewOffer(eq(MERCHANT_IDENTIFIER), any(Offer.class));
+
+        final MvcResult result = mockMvc.perform(
+                post(createOfferUrlTemplateWithMerchantIdentifier(), MERCHANT_IDENTIFIER)
+                        .contentType(CONTENT_TYPE)
+                        .content(toJson(offer))
+        ).andReturn();
+
+        assertThat(result.getResponse().getStatus(), equalTo(INTERNAL_SERVER_ERROR.value()));
+
+        verify(mockOfferService)
+                .createNewOffer(eq(MERCHANT_IDENTIFIER), any(Offer.class));
+    }
+
+    @Test
+    public void createNewOfferWhenDataIntegrityProblem()
             throws Exception {
 
         final Offer offer = new Offer();
