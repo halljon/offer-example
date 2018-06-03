@@ -103,7 +103,6 @@ Response body: active Offer
 ```
 
 # Things to do 
-* [Exception handling configured for controllers to give a 500 whenever anything goes wrong](https://github.com/halljon/offer-example/issues/30) 
 * Change timestamp to local date time.
 * [Document REST API](https://github.com/halljon/offer-example/issues/26)
 * Add caching of currencies, so that currency code can be quickly checked, rather than simply relying on the database foreign key constraint.
