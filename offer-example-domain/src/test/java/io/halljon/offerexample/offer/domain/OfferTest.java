@@ -1,6 +1,5 @@
 package io.halljon.offerexample.offer.domain;
 
-import org.hamcrest.core.IsEqual;
 import org.junit.Test;
 
 import javax.validation.ConstraintViolation;
