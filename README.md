@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/github/littlegrid/littlegrid-coherence-testsupport?branch=3.x.x-release)](https://travis-ci.com/littlegrid/littlegrid-coherence-testsupport)
+[![Build Status](https://travis-ci.com/halljon/offer-example.svg?branch=master)](https://travis-ci.com/halljon/offer-example) # littlegrid-coherence-testsupport
 
 # offer-example
 An example project based around a 'offer' demonstrating Spring Boot and exposing a REST API.
